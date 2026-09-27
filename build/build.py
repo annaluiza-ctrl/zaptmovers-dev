@@ -54,6 +54,7 @@ HEADER = '''
       <a class="nl" href="/#process">How it works</a>
       <a class="nl" href="/movers/">Locations</a>
       <a class="nl" href="/blog/">Blog</a>
+      <a class="nl" href="/book/">Book now</a>
       <a class="btn btn-zap" href="#quote">Free quote</a>
     </nav>
   </div>

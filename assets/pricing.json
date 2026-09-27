@@ -1,0 +1,107 @@
+{
+  "_comment": "Zapt Movers pricing and operations settings. Edit in /admin/pricing/ and download this file, or edit here directly and redeploy. Every number the booking calculator uses lives in this file.",
+
+  "googleMapsKey": "",
+
+  "productivity": {
+    "cuftPerMoverPerHour": 55,
+    "_cuftPerMoverPerHour": "How many cubic feet one mover loads AND unloads per hour. Lower it if your quotes keep coming in short.",
+    "minimumHours": 3,
+    "stairsFlightPenaltyPct": 12,
+    "_stairsFlightPenaltyPct": "Extra time per flight of stairs, as a percentage of labor hours.",
+    "elevatorPenaltyPct": 15,
+    "longCarryPenaltyPct": 10,
+    "packingHoursPer100Cuft": 1.5
+  },
+
+  "crew": [
+    { "maxCuft": 350,  "movers": 2 },
+    { "maxCuft": 800,  "movers": 3 },
+    { "maxCuft": 1400, "movers": 4 },
+    { "maxCuft": 2200, "movers": 5 },
+    { "maxCuft": 99999, "movers": 6 }
+  ],
+  "_crew": "First row whose maxCuft is not exceeded wins. Stairs and heavy items can push this up one crew size automatically.",
+
+  "hourlyRates": {
+    "2": 149,
+    "3": 199,
+    "4": 249,
+    "5": 299,
+    "6": 349
+  },
+  "_hourlyRates": "Dollars per hour by crew size, truck included.",
+
+  "trucks": [
+    { "name": "16 ft truck",  "capacityCuft": 800 },
+    { "name": "20 ft truck",  "capacityCuft": 1100 },
+    { "name": "26 ft truck",  "capacityCuft": 1600 },
+    { "name": "26 ft truck x2", "capacityCuft": 3200 }
+  ],
+  "_trucks": "Usable capacity, not the manufacturer number. Leave headroom for pads and awkward loads.",
+  "truckLoadFactor": 0.85,
+
+  "travel": {
+    "doubleDriveTime": true,
+    "_doubleDriveTime": "California requires charging double the drive time between addresses on local moves.",
+    "minimumTravelMinutes": 30,
+    "mileageRatePerMile": 0,
+    "longDistanceThresholdMiles": 100,
+    "longDistanceRatePerMile": 2.25
+  },
+
+  "fees": [
+    { "id": "truckFee",    "label": "Truck and equipment fee", "amount": 125, "auto": true },
+    { "id": "stairsFee",   "label": "Stair carry fee",         "amount": 75,  "auto": false },
+    { "id": "longCarry",   "label": "Long carry fee",          "amount": 95,  "auto": false },
+    { "id": "shuttle",     "label": "Shuttle truck",           "amount": 350, "auto": false },
+    { "id": "piano",       "label": "Piano handling",          "amount": 350, "auto": false },
+    { "id": "safe",        "label": "Safe handling",           "amount": 300, "auto": false },
+    { "id": "poolTable",   "label": "Pool table service",      "amount": 450, "auto": false }
+  ],
+  "_fees": "auto:true means it is always added. The others are triggered by what the customer selects.",
+
+  "protection": {
+    "tvCratingPerTv": 65,
+    "_tvCratingPerTv": "Per TV, charged when the customer adds TV protection.",
+    "fullValueProtectionPctOfEstimate": 8,
+    "_fullValueProtectionPctOfEstimate": "Optional upgrade beyond the included basic coverage."
+  },
+
+  "materials": {
+    "includedFree": ["Furniture pads", "Shrink wrap", "Floor runners", "Mattress bags"],
+    "items": [
+      { "id": "smallBox",   "label": "Small box",         "price": 2.50 },
+      { "id": "mediumBox",  "label": "Medium box",        "price": 3.50 },
+      { "id": "largeBox",   "label": "Large box",         "price": 4.50 },
+      { "id": "wardrobe",   "label": "Wardrobe box",      "price": 18.00 },
+      { "id": "dishPack",   "label": "Dish pack kit",     "price": 22.00 },
+      { "id": "pictureBox", "label": "Picture box",       "price": 14.00 },
+      { "id": "tapeRoll",   "label": "Packing tape roll", "price": 4.00 },
+      { "id": "paperBundle","label": "Packing paper bundle","price": 28.00 }
+    ]
+  },
+
+  "packing": {
+    "offerFullPacking": true,
+    "fullPackingRatePerCuft": 1.35,
+    "fragileOnlyRatePerCuft": 0.85
+  },
+
+  "timeWindows": [
+    { "id": "am", "label": "Morning arrival", "range": "8:00 AM - 10:00 AM" },
+    { "id": "pm", "label": "Afternoon arrival", "range": "12:00 PM - 2:00 PM" }
+  ],
+
+  "quote": {
+    "rangePaddingPct": 12,
+    "_rangePaddingPct": "The customer sees a range. This is how far above and below the calculated total it spreads.",
+    "depositAmount": 150,
+    "currency": "USD"
+  },
+
+  "notify": {
+    "salesEmail": "sales@zaptmovers.com",
+    "alsoCreateSmartMovingLead": true
+  }
+}

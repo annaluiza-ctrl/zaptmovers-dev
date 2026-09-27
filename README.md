@@ -139,3 +139,50 @@ Near-identical city pages are treated as doorway pages by Google and can hurt
 the whole site rather than just failing to rank.
 
 The build also rewrites `sitemap.xml`.
+
+## Online booking
+
+`/book/` is a five-step booking flow: date and addresses, access, inventory by
+room, packing and materials, then a priced quote with two arrival windows.
+
+Files:
+
+```
+book/index.html                 the flow
+admin/pricing/                  settings editor (noindex)
+assets/pricing.json             every number the calculator uses
+assets/inventory.js             room-by-room catalog with cu ft and lbs
+assets/booking-engine.js        pure calculation, no DOM
+netlify/functions/booking.mjs   emails sales@ and creates a SmartMoving lead
+```
+
+### Required environment variables
+
+```
+RESEND_API_KEY         sign up at resend.com, verify zaptmovers.com as a sender
+BOOKING_FROM_EMAIL     e.g. bookings@zaptmovers.com (must be on the verified domain)
+SALES_EMAIL            defaults to sales@zaptmovers.com
+```
+
+`SMARTMOVING_PROVIDER_KEY` is already set and is reused, so every booking also
+lands in the sales pipeline. Without `RESEND_API_KEY` the booking still reaches
+SmartMoving and the full payload is written to the function log, but no email
+is sent.
+
+### Google Maps autocomplete
+
+Set `googleMapsKey` in `assets/pricing.json` (or in the settings page). Enable
+Places API and Distance Matrix API on the key. **Restrict the key by HTTP
+referrer to your domain before going live** — an unrestricted key can be used
+by anyone and billed to you. With no key, the address fields stay plain text
+and drive time falls back to the configured minimum.
+
+### Tuning the price
+
+`cuftPerMoverPerHour` is the number that moves everything. Start at 55, then
+compare a few real completed jobs against what the calculator would have
+quoted and adjust. The settings page recalculates a sample 2-bedroom move as
+you type so you can see the effect immediately.
+
+Saving in the settings page writes to **your browser only**, for testing.
+To make changes live, download `pricing.json` and replace the file in the repo.

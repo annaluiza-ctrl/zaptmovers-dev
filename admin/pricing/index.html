@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing settings | Zapt Movers</title>
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Instrument+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#111C2E;--ink-2:#3A4A66;--kraft:#EFE6D6;--kraft-deep:#E2D4BC;--zap:#FFD100;--paper:#fff;--stamp:#B23A2E}
+*{box-sizing:border-box}
+body{margin:0;background:var(--kraft);color:var(--ink);font-family:"Instrument Sans",system-ui,sans-serif;font-size:15px;line-height:1.5}
+h1,h2{font-family:"Big Shoulders Display",sans-serif;font-weight:900;text-transform:uppercase;line-height:.95;margin:0}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px 140px}
+.mono{font-family:"DM Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+header{background:var(--ink);color:var(--kraft);padding:22px 0;margin-bottom:26px}
+header .wrap{padding-bottom:0}
+header h1{font-size:34px}
+header p{margin:8px 0 0;color:rgba(239,230,214,.75);max-width:62ch}
+.card{background:var(--paper);border:1px solid var(--kraft-deep);border-radius:12px;padding:22px;margin-bottom:16px}
+.card h2{font-size:24px;margin-bottom:4px}
+.card .hint{color:var(--ink-2);font-size:13.5px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+label{display:block;font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2);margin-bottom:5px}
+input,select{width:100%;padding:10px 12px;border:1.5px solid var(--kraft-deep);border-radius:9px;font-family:inherit;font-size:15px;background:#FCFAF6;color:var(--ink)}
+input:focus{outline:3px solid rgba(255,209,0,.6);outline-offset:1px;border-color:var(--ink)}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--ink)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);font-weight:500;padding-bottom:8px}
+td{padding:5px 8px 5px 0;border-bottom:1px solid var(--kraft-deep)}
+td:last-child{padding-right:0}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:var(--kraft);padding:14px 0;z-index:50}
+.bar .wrap{display:flex;gap:12px;align-items:center;padding-bottom:0;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--zap);color:var(--ink);border:0;border-radius:999px;padding:11px 20px;font-family:inherit;font-weight:600;font-size:14.5px;cursor:pointer;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--kraft);border:1.5px solid rgba(239,230,214,.5)}
+.saved{margin-left:auto;font-family:"DM Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.8}
+.warn{background:#FFF8DC;border:1px solid var(--zap);border-radius:10px;padding:14px 16px;font-size:13.5px;margin-bottom:20px}
+.preview{background:var(--ink);color:var(--kraft);border-radius:12px;padding:20px;margin-bottom:16px}
+.preview h2{color:var(--kraft);font-size:22px;margin-bottom:12px}
+.preview .out{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px}
+.preview .out div b{display:block;font-family:"Big Shoulders Display",sans-serif;font-weight:900;font-size:26px;color:var(--zap);line-height:1}
+.preview .out div span{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.8}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Pricing &amp; operations settings</h1>
+    <p>Every number the booking calculator uses. Change something and the preview at the bottom recalculates a sample move immediately.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="warn">
+    <b>How saving works.</b> Save applies your changes to this browser only, so you can test them on the booking page before anyone else sees them. To make them live for customers, click <b>Download pricing.json</b> and replace <code>assets/pricing.json</code> in the repo, then deploy.
+  </div>
+
+  <div class="card">
+    <h2>Productivity</h2>
+    <p class="hint">The first number is the most important one in the whole system. If quotes keep coming in short, lower it.</p>
+    <div class="grid">
+      <div><label for="cuftHr">Cu ft per mover per hour</label><input type="number" id="cuftHr" step="1"></div>
+      <div><label for="minHrs">Minimum billable hours</label><input type="number" id="minHrs" step="0.5"></div>
+      <div><label for="stairPct">Stairs penalty per flight (%)</label><input type="number" id="stairPct" step="1"></div>
+      <div><label for="elevPct">Elevator penalty (%)</label><input type="number" id="elevPct" step="1"></div>
+      <div><label for="carryPct">Long carry penalty (%)</label><input type="number" id="carryPct" step="1"></div>
+      <div><label for="packHrs">Packing hours per 100 cu ft</label><input type="number" id="packHrs" step="0.1"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Crew size</h2>
+    <p class="hint">First row whose limit is not exceeded wins. Stairs or several heavy items add one mover automatically.</p>
+    <table><thead><tr><th>Up to cubic feet</th><th>Movers</th><th>Rate per hour</th></tr></thead>
+      <tbody id="crewRows"></tbody></table>
+  </div>
+
+  <div class="card">
+    <h2>Trucks</h2>
+    <p class="hint">Usable capacity, not the manufacturer number. The load factor leaves room for pads and awkward pieces.</p>
+    <table><thead><tr><th>Truck</th><th>Usable cu ft</th></tr></thead><tbody id="truckRows"></tbody></table>
+    <div class="grid" style="margin-top:14px">
+      <div><label for="loadFactor">Load factor (0 to 1)</label><input type="number" id="loadFactor" step="0.05" min="0.5" max="1"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Travel</h2>
+    <p class="hint">California requires doubling drive time between addresses on local moves.</p>
+    <div class="grid">
+      <div><label for="ddt">Double drive time</label><select id="ddt"><option value="true">On</option><option value="false">Off</option></select></div>
+      <div><label for="minTravel">Minimum travel minutes</label><input type="number" id="minTravel" step="5"></div>
+      <div><label for="ldThresh">Long distance over (miles)</label><input type="number" id="ldThresh" step="10"></div>
+      <div><label for="ldRate">Long distance rate per mile</label><input type="number" id="ldRate" step="0.05"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Fees</h2>
+    <p class="hint">Auto fees apply to every move. The rest are triggered by what the customer selects.</p>
+    <table><thead><tr><th>Fee</th><th>Amount</th><th>Always</th></tr></thead><tbody id="feeRows"></tbody></table>
+  </div>
+
+  <div class="card">
+    <h2>Protection</h2>
+    <div class="grid">
+      <div><label for="tvCrate">TV crating, each</label><input type="number" id="tvCrate" step="5"></div>
+      <div><label for="fvpPct">Full value protection (% of subtotal)</label><input type="number" id="fvpPct" step="0.5"></div>
+      <div><label for="deposit">Deposit to hold the date</label><input type="number" id="deposit" step="25"></div>
+      <div><label for="padPct">Quote range padding (%)</label><input type="number" id="padPct" step="1"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Materials</h2>
+    <table><thead><tr><th>Item</th><th>Price</th></tr></thead><tbody id="matRows"></tbody></table>
+  </div>
+
+  <div class="card">
+    <h2>Arrival windows</h2>
+    <p class="hint">The two choices the customer picks between on the last step.</p>
+    <table><thead><tr><th>Label</th><th>Time range</th></tr></thead><tbody id="winRows"></tbody></table>
+  </div>
+
+  <div class="card">
+    <h2>Integrations</h2>
+    <div class="grid">
+      <div><label for="gkey">Google Maps API key</label><input type="text" id="gkey" placeholder="Leave empty to disable address autocomplete"></div>
+      <div><label for="salesEmail">Sales email</label><input type="text" id="salesEmail"></div>
+    </div>
+    <p class="hint" style="margin:14px 0 0">Restrict the Maps key by HTTP referrer in Google Cloud Console before going live. An unrestricted key can be used by anyone and billed to you.</p>
+  </div>
+
+  <div class="preview">
+    <h2>Live check: 2-bedroom, 1 flight of stairs, 30 min drive</h2>
+    <div class="out">
+      <div><b id="pvMovers">—</b><span>Movers</span></div>
+      <div><b id="pvTruck">—</b><span>Truck</span></div>
+      <div><b id="pvHours">—</b><span>Billable hours</span></div>
+      <div><b id="pvTotal">—</b><span>Total</span></div>
+      <div><b id="pvRange">—</b><span>Shown to customer</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bar">
+  <div class="wrap">
+    <button class="btn" id="saveBtn">Save to this browser</button>
+    <button class="btn ghost" id="downloadBtn">Download pricing.json</button>
+    <button class="btn ghost" id="resetBtn">Reset to deployed file</button>
+    <a class="btn ghost" href="/book/" target="_blank">Open booking page</a>
+    <span class="saved" id="savedMsg"></span>
+  </div>
+</div>
+
+<script src="/assets/inventory.js"></script>
+<script src="/assets/booking-engine.js"></script>
+<script>
+(function () {
+  'use strict';
+  var S = null, FILE = null;
+  var $ = function (id) { return document.getElementById(id); };
+
+  fetch('/assets/pricing.json').then(function (r) { return r.json(); }).then(function (json) {
+    FILE = JSON.parse(JSON.stringify(json));
+    var o = null;
+    try { o = JSON.parse(localStorage.getItem('zapt_pricing_override') || 'null'); } catch (e) {}
+    S = o || json;
+    render();
+    if (o) $('savedMsg').textContent = 'Using your saved override';
+  });
+
+  function num(id, v) { $(id).value = v; }
+
+  function render() {
+    var p = S.productivity;
+    num('cuftHr', p.cuftPerMoverPerHour); num('minHrs', p.minimumHours);
+    num('stairPct', p.stairsFlightPenaltyPct); num('elevPct', p.elevatorPenaltyPct);
+    num('carryPct', p.longCarryPenaltyPct); num('packHrs', p.packingHoursPer100Cuft);
+
+    $('crewRows').innerHTML = S.crew.map(function (c, i) {
+      var rate = S.hourlyRates[String(c.movers)] || '';
+      return '<tr><td><input type="number" data-crew="' + i + '" data-k="maxCuft" value="' + c.maxCuft + '"></td>'
+        + '<td><input type="number" data-crew="' + i + '" data-k="movers" value="' + c.movers + '"></td>'
+        + '<td><input type="number" data-rate="' + c.movers + '" value="' + rate + '"></td></tr>';
+    }).join('');
+
+    $('truckRows').innerHTML = S.trucks.map(function (t, i) {
+      return '<tr><td><input type="text" data-truck="' + i + '" data-k="name" value="' + t.name + '"></td>'
+        + '<td><input type="number" data-truck="' + i + '" data-k="capacityCuft" value="' + t.capacityCuft + '"></td></tr>';
+    }).join('');
+    num('loadFactor', S.truckLoadFactor);
+
+    $('ddt').value = String(!!S.travel.doubleDriveTime);
+    num('minTravel', S.travel.minimumTravelMinutes);
+    num('ldThresh', S.travel.longDistanceThresholdMiles);
+    num('ldRate', S.travel.longDistanceRatePerMile);
+
+    $('feeRows').innerHTML = S.fees.map(function (f, i) {
+      return '<tr><td><input type="text" data-fee="' + i + '" data-k="label" value="' + f.label + '"></td>'
+        + '<td><input type="number" data-fee="' + i + '" data-k="amount" value="' + f.amount + '"></td>'
+        + '<td><input type="checkbox" data-fee="' + i + '" data-k="auto"' + (f.auto ? ' checked' : '') + '></td></tr>';
+    }).join('');
+
+    num('tvCrate', S.protection.tvCratingPerTv);
+    num('fvpPct', S.protection.fullValueProtectionPctOfEstimate);
+    num('deposit', S.quote.depositAmount);
+    num('padPct', S.quote.rangePaddingPct);
+
+    $('matRows').innerHTML = S.materials.items.map(function (m, i) {
+      return '<tr><td><input type="text" data-mat="' + i + '" data-k="label" value="' + m.label + '"></td>'
+        + '<td><input type="number" step="0.5" data-mat="' + i + '" data-k="price" value="' + m.price + '"></td></tr>';
+    }).join('');
+
+    $('winRows').innerHTML = S.timeWindows.map(function (w, i) {
+      return '<tr><td><input type="text" data-win="' + i + '" data-k="label" value="' + w.label + '"></td>'
+        + '<td><input type="text" data-win="' + i + '" data-k="range" value="' + w.range + '"></td></tr>';
+    }).join('');
+
+    $('gkey').value = S.googleMapsKey || '';
+    $('salesEmail').value = (S.notify && S.notify.salesEmail) || '';
+
+    document.querySelectorAll('input,select').forEach(function (el) {
+      el.addEventListener('input', collect);
+      el.addEventListener('change', collect);
+    });
+    preview();
+  }
+
+  function collect() {
+    var p = S.productivity;
+    p.cuftPerMoverPerHour = +$('cuftHr').value;
+    p.minimumHours = +$('minHrs').value;
+    p.stairsFlightPenaltyPct = +$('stairPct').value;
+    p.elevatorPenaltyPct = +$('elevPct').value;
+    p.longCarryPenaltyPct = +$('carryPct').value;
+    p.packingHoursPer100Cuft = +$('packHrs').value;
+
+    document.querySelectorAll('[data-crew]').forEach(function (el) {
+      S.crew[+el.dataset.crew][el.dataset.k] = +el.value;
+    });
+    document.querySelectorAll('[data-rate]').forEach(function (el) {
+      S.hourlyRates[el.dataset.rate] = +el.value;
+    });
+    document.querySelectorAll('[data-truck]').forEach(function (el) {
+      S.trucks[+el.dataset.truck][el.dataset.k] = el.dataset.k === 'name' ? el.value : +el.value;
+    });
+    S.truckLoadFactor = +$('loadFactor').value;
+
+    S.travel.doubleDriveTime = $('ddt').value === 'true';
+    S.travel.minimumTravelMinutes = +$('minTravel').value;
+    S.travel.longDistanceThresholdMiles = +$('ldThresh').value;
+    S.travel.longDistanceRatePerMile = +$('ldRate').value;
+
+    document.querySelectorAll('[data-fee]').forEach(function (el) {
+      var f = S.fees[+el.dataset.fee], k = el.dataset.k;
+      f[k] = k === 'auto' ? el.checked : (k === 'amount' ? +el.value : el.value);
+    });
+
+    S.protection.tvCratingPerTv = +$('tvCrate').value;
+    S.protection.fullValueProtectionPctOfEstimate = +$('fvpPct').value;
+    S.quote.depositAmount = +$('deposit').value;
+    S.quote.rangePaddingPct = +$('padPct').value;
+
+    document.querySelectorAll('[data-mat]').forEach(function (el) {
+      var m = S.materials.items[+el.dataset.mat];
+      m[el.dataset.k] = el.dataset.k === 'price' ? +el.value : el.value;
+    });
+    document.querySelectorAll('[data-win]').forEach(function (el) {
+      S.timeWindows[+el.dataset.win][el.dataset.k] = el.value;
+    });
+
+    S.googleMapsKey = $('gkey').value.trim();
+    S.notify = S.notify || {};
+    S.notify.salesEmail = $('salesEmail').value.trim();
+
+    preview();
+  }
+
+  /* sample job: typical 2-bedroom */
+  function sampleJob() {
+    var want = { 'Queen bed, complete': 1, 'Dresser, double': 1, 'Nightstand': 2, 'Twin bed, complete': 1,
+                 'Sofa, 3-seat': 1, 'Armchair': 1, 'Coffee table': 1, 'TV, 56 to 75 inch': 1,
+                 'Dining table': 1, 'Dining chair': 4, 'Refrigerator': 1,
+                 'Medium box, 3 cu ft': 20, 'Large box, 4.5 cu ft': 10, 'Wardrobe box': 3 };
+    var inv = [];
+    ZAPT_INVENTORY.forEach(function (room) {
+      room.items.forEach(function (it) {
+        if (want[it.n]) inv.push(Object.assign({}, it, { qty: want[it.n] }));
+      });
+    });
+    return {
+      inventory: inv,
+      access: { origin: { type: 'stairs', flights: 1 }, destination: { type: 'ground' } },
+      materials: [], packing: 'none', driveMinutes: 30, miles: 14
+    };
+  }
+
+  function preview() {
+    try {
+      var q = ZaptQuote.calculate(sampleJob(), S);
+      $('pvMovers').textContent = q.movers;
+      $('pvTruck').textContent = q.truck.name.replace(' truck', '');
+      $('pvHours').textContent = q.billableHours;
+      $('pvTotal').textContent = '$' + q.total.toLocaleString('en-US');
+      $('pvRange').textContent = '$' + q.low.toLocaleString('en-US') + '–' + q.high.toLocaleString('en-US');
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  $('saveBtn').addEventListener('click', function () {
+    localStorage.setItem('zapt_pricing_override', JSON.stringify(S));
+    $('savedMsg').textContent = 'Saved to this browser at ' + new Date().toLocaleTimeString();
+  });
+
+  $('downloadBtn').addEventListener('click', function () {
+    var blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'pricing.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  $('resetBtn').addEventListener('click', function () {
+    localStorage.removeItem('zapt_pricing_override');
+    S = JSON.parse(JSON.stringify(FILE));
+    render();
+    $('savedMsg').textContent = 'Back to the deployed file';
+  });
+})();
+</script>
+</body>
+</html>

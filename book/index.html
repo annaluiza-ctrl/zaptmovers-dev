@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Your Move | Zapt Movers</title>
+<meta name="description" content="Build your move online: pick a date, add your inventory room by room, and get a real price with your crew size and truck. No phone call required.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800;900&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#111C2E;--ink-2:#3A4A66;--kraft:#EFE6D6;--kraft-deep:#E2D4BC;
+  --corrugate:#C29A63;--zap:#FFD100;--paper:#FFFFFF;--stamp:#B23A2E;
+  --radius:14px;--pad:clamp(16px,4vw,48px);--maxw:1080px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--kraft);color:var(--ink);font-family:"Instrument Sans",system-ui,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"Big Shoulders Display","Arial Narrow",sans-serif;font-weight:900;line-height:.94;letter-spacing:-.01em;text-transform:uppercase;margin:0}
+p{margin:0 0 1em}
+a{color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--pad)}
+.mono{font-family:"DM Mono",ui-monospace,monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}
+
+header{position:sticky;top:0;z-index:60;background:rgba(239,230,214,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--kraft-deep)}
+.bar{display:flex;align-items:center;gap:18px;height:66px}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+.logo img{height:26px;width:auto}
+.logo .mark{font-family:"Big Shoulders Display",sans-serif;font-weight:900;font-size:24px;letter-spacing:-.02em;line-height:1}
+.logo .mark em{font-style:normal;background:var(--zap);padding:0 4px;display:inline-block;transform:skewX(-8deg)}
+.bar .help{margin-left:auto;font-weight:600;font-size:14px;text-decoration:none;display:flex;align-items:center;gap:7px}
+
+/* stepper */
+.steps{display:flex;gap:6px;padding:16px 0 0}
+.steps div{flex:1;height:5px;border-radius:3px;background:var(--kraft-deep)}
+.steps div.done{background:var(--ink)}
+.steps div.now{background:var(--zap)}
+.stepnum{margin:14px 0 4px;color:var(--ink-2)}
+
+main{padding-bottom:120px}
+.panel{display:none}
+.panel.active{display:block}
+h2.ph{font-size:clamp(32px,5vw,52px);margin-bottom:10px}
+.sub{color:var(--ink-2);margin-bottom:26px;max-width:58ch}
+
+.card{background:var(--paper);border:1px solid var(--kraft-deep);border-radius:var(--radius);padding:22px;margin-bottom:16px}
+.field{margin-bottom:16px}
+.field label{display:block;margin-bottom:6px;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2)}
+input[type=text],input[type=tel],input[type=date],input[type=number],select,textarea{
+  width:100%;padding:12px 13px;border:1.5px solid var(--kraft-deep);border-radius:10px;
+  font-family:inherit;font-size:15px;background:#FCFAF6;color:var(--ink);
+}
+input:focus,select:focus,textarea:focus{outline:3px solid rgba(255,209,0,.6);outline-offset:1px;border-color:var(--ink)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.opt span{display:block;padding:10px 15px;border:1.5px solid var(--kraft-deep);border-radius:999px;font-size:14px;cursor:pointer;user-select:none}
+.opt input:checked+span{background:var(--ink);color:var(--kraft);border-color:var(--ink)}
+.opt input:focus-visible+span{outline:3px solid rgba(255,209,0,.7);outline-offset:2px}
+
+/* inventory */
+.roomtabs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
+.roomtabs button{font-family:"DM Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:var(--paper);border:1px solid var(--kraft-deep);padding:9px 13px;border-radius:999px;cursor:pointer;color:var(--ink)}
+.roomtabs button[aria-pressed="true"]{background:var(--ink);color:var(--kraft);border-color:var(--ink)}
+.roomtabs button .badge{background:var(--zap);color:var(--ink);border-radius:20px;padding:0 6px;margin-left:6px;font-size:10px}
+.roomtabs button[aria-pressed="true"] .badge{background:var(--zap);color:var(--ink)}
+.items{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.item{display:flex;align-items:center;gap:12px;background:var(--paper);border:1px solid var(--kraft-deep);border-radius:11px;padding:11px 13px}
+.item.has{border-color:var(--ink);box-shadow:inset 3px 0 0 var(--zap)}
+.item .nm{flex:1;min-width:0}
+.item .nm b{display:block;font-weight:500;font-size:14.5px}
+.item .nm small{color:var(--ink-2);font-size:11.5px;font-family:"DM Mono",monospace}
+.stepper{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.stepper button{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--kraft-deep);background:var(--paper);cursor:pointer;font-size:17px;line-height:1;color:var(--ink);display:grid;place-items:center}
+.stepper button:hover{border-color:var(--ink)}
+.stepper .q{min-width:22px;text-align:center;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* running tally */
+.tally{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:var(--kraft);z-index:70;box-shadow:0 -10px 30px -18px rgba(0,0,0,.6)}
+.tally .wrap{display:flex;align-items:center;gap:18px;padding-block:13px;flex-wrap:wrap}
+.tally .stat{display:flex;flex-direction:column;line-height:1.15}
+.tally .stat b{font-family:"Big Shoulders Display",sans-serif;font-weight:900;font-size:24px;color:var(--zap)}
+.tally .stat span{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.8}
+.tally .acts{margin-left:auto;display:flex;gap:10px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--ink);color:var(--kraft);text-decoration:none;padding:12px 22px;border-radius:999px;border:0;cursor:pointer;font-family:inherit;font-weight:600;font-size:15px}
+.btn-zap{background:var(--zap);color:var(--ink)}
+.btn-ghost{background:transparent;color:var(--kraft);border:1.5px solid rgba(239,230,214,.5)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* quote */
+.quotegrid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:start}
+.big{background:var(--paper);border:1px solid var(--kraft-deep);border-radius:var(--radius);overflow:hidden}
+.big .top{background:var(--zap);padding:24px;position:relative}
+.big .top::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(-45deg,rgba(17,28,46,.05) 0 12px,transparent 12px 24px)}
+.big .amt{font-family:"Big Shoulders Display",sans-serif;font-weight:900;font-size:clamp(38px,6vw,58px);line-height:.9;position:relative}
+.big .top .mono{position:relative;color:var(--ink)}
+.big .body{padding:22px}
+.spec{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.spec div{background:var(--kraft);border-radius:10px;padding:13px}
+.spec b{display:block;font-family:"Big Shoulders Display",sans-serif;font-weight:900;font-size:26px;line-height:1}
+.spec span{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+table{width:100%;border-collapse:collapse}
+td{padding:9px 0;border-bottom:1px solid var(--kraft-deep);font-size:14.5px}
+td:last-child{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+tr.sum td{border-bottom:0;padding-top:14px;font-weight:700;font-size:17px}
+.note{font-size:12.5px;color:var(--ink-2)}
+.win{display:block;border:1.5px solid var(--kraft-deep);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;position:relative}
+.win input{position:absolute;opacity:0}
+.win b{font-family:"Big Shoulders Display",sans-serif;font-weight:900;font-size:22px;display:block}
+.win small{color:var(--ink-2)}
+.win.sel{border-color:var(--ink);background:var(--kraft)}
+.status{border-radius:12px;padding:20px;margin-top:16px;display:none}
+.status.ok{display:block;background:var(--kraft);border:2px solid var(--ink)}
+.status.bad{display:block;background:#FBEDEB;border:2px solid var(--stamp);color:var(--stamp)}
+.err{color:var(--stamp);font-size:13px;font-weight:600;margin-top:8px}
+
+@media(max-width:860px){
+  .items{grid-template-columns:1fr}
+  .quotegrid,.row,.row3{grid-template-columns:1fr}
+  .spec{grid-template-columns:repeat(3,1fr)}
+  .tally .stat b{font-size:20px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a href="/" class="logo">
+      <img src="/assets/icon-zapt.svg" alt="Zapt Movers">
+      <span class="mark">ZAPT<em>MOVERS</em></span>
+    </a>
+    <a class="help" href="tel:+14158432532">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>
+      Need help? (415) 843-2532
+    </a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="steps" id="steps"><div></div><div></div><div></div><div></div><div></div></div>
+  <div class="stepnum mono" id="stepnum">Step 1 of 5</div>
+</div>
+
+<main class="wrap">
+
+  <!-- 1. WHEN & WHERE -->
+  <section class="panel active" data-step="1">
+    <h2 class="ph">When and where</h2>
+    <p class="sub">Start typing and we'll fill in the address. We use it to work out drive time, which is part of the price.</p>
+    <div class="card">
+      <div class="field">
+        <label for="mdate">Preferred move date</label>
+        <input type="date" id="mdate">
+      </div>
+      <div class="field">
+        <label for="addrFrom">Moving from</label>
+        <input type="text" id="addrFrom" placeholder="Start typing your address" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="addrTo">Moving to</label>
+        <input type="text" id="addrTo" placeholder="Start typing the destination" autocomplete="off">
+      </div>
+      <p class="note mono" id="distNote" style="display:none"></p>
+    </div>
+    <button class="btn" data-next>Continue</button>
+    <p class="err" id="err1" style="display:none"></p>
+  </section>
+
+  <!-- 2. ACCESS -->
+  <section class="panel" data-step="2">
+    <h2 class="ph">Getting in and out</h2>
+    <p class="sub">Stairs and long carries are the single biggest reason a move runs over. Tell us now and the price accounts for it.</p>
+
+    <div class="card">
+      <h3 style="font-size:22px;margin-bottom:14px">At the pickup address</h3>
+      <div class="field">
+        <label>Access</label>
+        <div class="opts" data-access="origin">
+          <label class="opt"><input type="radio" name="accO" value="ground" checked><span>Ground floor</span></label>
+          <label class="opt"><input type="radio" name="accO" value="stairs"><span>Stairs</span></label>
+          <label class="opt"><input type="radio" name="accO" value="elevator"><span>Elevator</span></label>
+        </div>
+      </div>
+      <div class="field" id="flightsO" style="display:none">
+        <label for="flO">How many flights of stairs?</label>
+        <select id="flO"><option value="1">1 flight</option><option value="2">2 flights</option><option value="3">3 flights</option><option value="4">4 or more</option></select>
+      </div>
+      <label class="opt" style="display:block"><input type="checkbox" id="carryO"><span>Truck has to park more than 75 feet from the door</span></label>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:22px;margin-bottom:14px">At the delivery address</h3>
+      <div class="field">
+        <label>Access</label>
+        <div class="opts" data-access="destination">
+          <label class="opt"><input type="radio" name="accD" value="ground" checked><span>Ground floor</span></label>
+          <label class="opt"><input type="radio" name="accD" value="stairs"><span>Stairs</span></label>
+          <label class="opt"><input type="radio" name="accD" value="elevator"><span>Elevator</span></label>
+        </div>
+      </div>
+      <div class="field" id="flightsD" style="display:none">
+        <label for="flD">How many flights of stairs?</label>
+        <select id="flD"><option value="1">1 flight</option><option value="2">2 flights</option><option value="3">3 flights</option><option value="4">4 or more</option></select>
+      </div>
+      <label class="opt" style="display:block"><input type="checkbox" id="carryD"><span>Truck has to park more than 75 feet from the door</span></label>
+    </div>
+
+    <button class="btn" data-back style="background:transparent;color:var(--ink);border:1.5px solid var(--ink)">Back</button>
+    <button class="btn" data-next>Continue</button>
+  </section>
+
+  <!-- 3. INVENTORY -->
+  <section class="panel" data-step="3">
+    <h2 class="ph">What are we moving?</h2>
+    <p class="sub">Go room by room. You don't have to be perfect — get the furniture right and estimate the boxes. The counter at the bottom updates as you go.</p>
+    <div class="roomtabs" id="roomtabs"></div>
+    <div class="items" id="items"></div>
+    <div style="margin-top:20px">
+      <button class="btn" data-back style="background:transparent;color:var(--ink);border:1.5px solid var(--ink)">Back</button>
+      <button class="btn" data-next>Continue</button>
+    </div>
+    <p class="err" id="err3" style="display:none"></p>
+  </section>
+
+  <!-- 4. EXTRAS -->
+  <section class="panel" data-step="4">
+    <h2 class="ph">Packing and protection</h2>
+    <p class="sub">Furniture pads, shrink wrap, floor runners and mattress bags are already included at no charge.</p>
+
+    <div class="card">
+      <div class="field">
+        <label>Packing service</label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="pack" value="none" checked><span>I'll pack myself</span></label>
+          <label class="opt"><input type="radio" name="pack" value="fragile"><span>Fragile items only</span></label>
+          <label class="opt"><input type="radio" name="pack" value="full"><span>Pack everything</span></label>
+        </div>
+      </div>
+      <label class="opt" style="display:block;margin-bottom:10px"><input type="checkbox" id="tvProt"><span id="tvProtLabel">Crate and protect my TVs</span></label>
+      <label class="opt" style="display:block"><input type="checkbox" id="fvp"><span>Add full value protection (covers replacement cost)</span></label>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:22px;margin-bottom:6px">Need packing materials?</h3>
+      <p class="note" style="margin-bottom:16px">Delivered before move day. Skip this if you already have boxes.</p>
+      <div class="items" id="materials"></div>
+    </div>
+
+    <button class="btn" data-back style="background:transparent;color:var(--ink);border:1.5px solid var(--ink)">Back</button>
+    <button class="btn" data-next>See my price</button>
+  </section>
+
+  <!-- 5. QUOTE -->
+  <section class="panel" data-step="5">
+    <h2 class="ph">Your move, priced</h2>
+    <p class="sub">Built from your inventory, your access and the drive between the two addresses.</p>
+
+    <div class="quotegrid">
+      <div class="big">
+        <div class="top">
+          <div class="mono">Estimated total</div>
+          <div class="amt" id="qAmount">$0</div>
+        </div>
+        <div class="body">
+          <div class="spec">
+            <div><b id="qMovers">0</b><span>Movers</span></div>
+            <div><b id="qTruck">—</b><span>Truck</span></div>
+            <div><b id="qHours">0</b><span>Billable hours</span></div>
+          </div>
+          <table id="qLines"></table>
+          <p class="note" id="qNote" style="margin-top:16px"></p>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3 style="font-size:22px;margin-bottom:6px">Pick your arrival window</h3>
+          <p class="note" style="margin-bottom:14px">We text you when the truck leaves the yard.</p>
+          <div id="windows"></div>
+        </div>
+        <div class="card">
+          <h3 style="font-size:22px;margin-bottom:14px">Where do we send it?</h3>
+          <div class="row">
+            <div class="field"><label for="cName">Name</label><input type="text" id="cName" autocomplete="name"></div>
+            <div class="field"><label for="cPhone">Phone</label><input type="tel" id="cPhone" autocomplete="tel"></div>
+          </div>
+          <div class="field"><label for="cEmail">Email</label><input type="text" id="cEmail" autocomplete="email" inputmode="email"></div>
+          <div class="field"><label for="cNotes">Anything we should know?</label><textarea id="cNotes" rows="3" placeholder="Gate code, HOA contact, tight street, an item you're worried about"></textarea></div>
+          <button class="btn btn-zap" id="submitBtn" style="width:100%"><span id="submitLabel">Request this booking</span></button>
+          <p class="err" id="err5" style="display:none"></p>
+          <p class="note" style="text-align:center;margin-top:12px">No charge now. A coordinator confirms the details and the final price.</p>
+          <div class="status" id="finalStatus" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:18px">
+      <button class="btn" data-back style="background:transparent;color:var(--ink);border:1.5px solid var(--ink)">Back to extras</button>
+    </div>
+  </section>
+
+</main>
+
+<div class="tally" id="tally">
+  <div class="wrap">
+    <div class="stat"><b id="tCuft">0</b><span>Cubic feet</span></div>
+    <div class="stat"><b id="tLbs">0</b><span>Pounds</span></div>
+    <div class="stat"><b id="tItems">0</b><span>Items</span></div>
+    <div class="stat"><b id="tCrew">—</b><span>Crew</span></div>
+    <div class="stat"><b id="tTruck">—</b><span>Truck</span></div>
+    <div class="acts"><button class="btn btn-zap" id="jumpQuote">See price</button></div>
+  </div>
+</div>
+
+<script src="/assets/inventory.js"></script>
+<script src="/assets/booking-engine.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var S = null;                       // settings
+  var state = {
+    date: '', from: null, to: null, driveMinutes: 0, miles: 0,
+    access: { origin: { type: 'ground', flights: 1, longCarry: false },
+              destination: { type: 'ground', flights: 1, longCarry: false } },
+    inventory: [], materials: [], packing: 'none',
+    tvProtection: false, fullValueProtection: false, window: null
+  };
+  var step = 1, activeRoom = 0, quote = null;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var money = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+
+  /* ---------- settings ---------- */
+  fetch('/assets/pricing.json').then(function (r) { return r.json(); }).then(function (json) {
+    var override = null;
+    try { override = JSON.parse(localStorage.getItem('zapt_pricing_override') || 'null'); } catch (e) {}
+    S = override || json;
+    buildInventory();
+    buildMaterials();
+    buildWindows();
+    if (S.googleMapsKey) loadMaps(S.googleMapsKey);
+    recalc();
+  }).catch(function (e) {
+    console.error('Could not load /assets/pricing.json', e);
+    document.body.innerHTML = '<div class="wrap" style="padding:60px 0"><h2 class="ph">Booking is offline</h2>'
+      + '<p class="sub">We could not load pricing settings. Please call (415) 843-2532 and we will take your move over the phone.</p></div>';
+  });
+
+  /* ---------- google places ---------- */
+  function loadMaps(key) {
+    var s = document.createElement('script');
+    s.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(key)
+          + '&libraries=places&loading=async&callback=zaptInitMaps';
+    s.async = true;
+    document.head.appendChild(s);
+  }
+  window.zaptInitMaps = function () {
+    ['addrFrom', 'addrTo'].forEach(function (id) {
+      var ac = new google.maps.places.Autocomplete($(id), {
+        types: ['address'],
+        componentRestrictions: { country: 'us' },
+        fields: ['formatted_address', 'geometry', 'address_components']
+      });
+      ac.addListener('place_changed', function () {
+        var p = ac.getPlace();
+        if (!p.geometry) return;
+        var rec = { text: p.formatted_address, lat: p.geometry.location.lat(), lng: p.geometry.location.lng() };
+        (p.address_components || []).forEach(function (c) {
+          if (c.types.indexOf('locality') > -1) rec.city = c.long_name;
+          if (c.types.indexOf('administrative_area_level_1') > -1) rec.state = c.short_name;
+          if (c.types.indexOf('postal_code') > -1) rec.zip = c.long_name;
+        });
+        state[id === 'addrFrom' ? 'from' : 'to'] = rec;
+        measure();
+      });
+    });
+  };
+
+  function measure() {
+    if (!state.from || !state.to || !window.google) return;
+    new google.maps.DistanceMatrixService().getDistanceMatrix({
+      origins: [{ lat: state.from.lat, lng: state.from.lng }],
+      destinations: [{ lat: state.to.lat, lng: state.to.lng }],
+      travelMode: 'DRIVING'
+    }, function (res, status) {
+      if (status !== 'OK') return;
+      var e = res.rows[0].elements[0];
+      if (e.status !== 'OK') return;
+      state.driveMinutes = Math.round(e.duration.value / 60);
+      state.miles = e.distance.value / 1609.34;
+      var n = $('distNote');
+      n.style.display = 'block';
+      n.textContent = Math.round(state.miles) + ' miles \u00b7 about ' + state.driveMinutes + ' minutes of driving';
+      recalc();
+    });
+  }
+
+  /* ---------- inventory ui ---------- */
+  function buildInventory() {
+    var tabs = $('roomtabs');
+    ZAPT_INVENTORY.forEach(function (room, i) {
+      var b = document.createElement('button');
+      b.innerHTML = room.room + ' <span class="badge" style="display:none">0</span>';
+      b.setAttribute('aria-pressed', String(i === 0));
+      b.addEventListener('click', function () { activeRoom = i; renderRooms(); });
+      tabs.appendChild(b);
+      room.items.forEach(function (it) {
+        state.inventory.push(Object.assign({}, it, { room: room.room, qty: 0 }));
+      });
+    });
+    renderRooms();
+  }
+
+  function renderRooms() {
+    var tabs = $('roomtabs').children;
+    ZAPT_INVENTORY.forEach(function (room, i) {
+      tabs[i].setAttribute('aria-pressed', String(i === activeRoom));
+      var count = state.inventory.filter(function (l) { return l.room === room.room; })
+                                 .reduce(function (s, l) { return s + l.qty; }, 0);
+      var badge = tabs[i].querySelector('.badge');
+      badge.textContent = count;
+      badge.style.display = count ? 'inline-block' : 'none';
+    });
+
+    var host = $('items');
+    host.innerHTML = '';
+    var roomName = ZAPT_INVENTORY[activeRoom].room;
+    state.inventory.forEach(function (line, idx) {
+      if (line.room !== roomName) return;
+      var el = document.createElement('div');
+      el.className = 'item' + (line.qty ? ' has' : '');
+      el.innerHTML = '<div class="nm"><b>' + line.n + '</b><small>' + line.cuft + ' cu ft \u00b7 ' + line.lbs + ' lb</small></div>'
+        + '<div class="stepper"><button type="button" aria-label="Remove one">\u2212</button>'
+        + '<span class="q">' + line.qty + '</span>'
+        + '<button type="button" aria-label="Add one">+</button></div>';
+      var btns = el.querySelectorAll('button');
+      btns[0].addEventListener('click', function () { bump(idx, -1); });
+      btns[1].addEventListener('click', function () { bump(idx, 1); });
+      host.appendChild(el);
+    });
+  }
+
+  function bump(idx, d) {
+    state.inventory[idx].qty = Math.max(0, state.inventory[idx].qty + d);
+    renderRooms();
+    recalc();
+  }
+
+  /* ---------- materials ---------- */
+  function buildMaterials() {
+    var host = $('materials');
+    S.materials.items.forEach(function (m) {
+      state.materials.push({ id: m.id, qty: 0 });
+      var rec = state.materials[state.materials.length - 1];
+      var el = document.createElement('div');
+      el.className = 'item';
+      el.innerHTML = '<div class="nm"><b>' + m.label + '</b><small>' + money(m.price) + ' each</small></div>'
+        + '<div class="stepper"><button type="button">\u2212</button><span class="q">0</span><button type="button">+</button></div>';
+      var q = el.querySelector('.q'), b = el.querySelectorAll('button');
+      function set(d) {
+        rec.qty = Math.max(0, rec.qty + d);
+        q.textContent = rec.qty;
+        el.classList.toggle('has', rec.qty > 0);
+        recalc();
+      }
+      b[0].addEventListener('click', function () { set(-1); });
+      b[1].addEventListener('click', function () { set(1); });
+      host.appendChild(el);
+    });
+  }
+
+  /* ---------- time windows ---------- */
+  function buildWindows() {
+    var host = $('windows');
+    S.timeWindows.forEach(function (w, i) {
+      var l = document.createElement('label');
+      l.className = 'win' + (i === 0 ? ' sel' : '');
+      l.innerHTML = '<input type="radio" name="win" value="' + w.id + '"' + (i === 0 ? ' checked' : '') + '>'
+        + '<b>' + w.range + '</b><small>' + w.label + '</small>';
+      l.addEventListener('click', function () {
+        host.querySelectorAll('.win').forEach(function (x) { x.classList.remove('sel'); });
+        l.classList.add('sel');
+        state.window = w;
+      });
+      host.appendChild(l);
+    });
+    state.window = S.timeWindows[0];
+  }
+
+  /* ---------- access ---------- */
+  function wireAccess(radioName, flightsBox, flightsSel, carryBox, key) {
+    document.querySelectorAll('input[name="' + radioName + '"]').forEach(function (r) {
+      r.addEventListener('change', function () {
+        state.access[key].type = r.value;
+        $(flightsBox).style.display = r.value === 'stairs' ? 'block' : 'none';
+        recalc();
+      });
+    });
+    $(flightsSel).addEventListener('change', function () {
+      state.access[key].flights = parseInt($(flightsSel).value, 10);
+      recalc();
+    });
+    $(carryBox).addEventListener('change', function () {
+      state.access[key].longCarry = $(carryBox).checked;
+      recalc();
+    });
+  }
+  wireAccess('accO', 'flightsO', 'flO', 'carryO', 'origin');
+  wireAccess('accD', 'flightsD', 'flD', 'carryD', 'destination');
+
+  document.querySelectorAll('input[name="pack"]').forEach(function (r) {
+    r.addEventListener('change', function () { state.packing = r.value; recalc(); });
+  });
+  $('tvProt').addEventListener('change', function () { state.tvProtection = this.checked; recalc(); });
+  $('fvp').addEventListener('change', function () { state.fullValueProtection = this.checked; recalc(); });
+
+  /* ---------- calculate ---------- */
+  function recalc() {
+    if (!S) return;
+    quote = ZaptQuote.calculate({
+      inventory: state.inventory, access: state.access, materials: state.materials,
+      packing: state.packing, tvProtection: state.tvProtection,
+      fullValueProtection: state.fullValueProtection,
+      driveMinutes: state.driveMinutes, miles: state.miles
+    }, S);
+
+    $('tCuft').textContent = quote.inventory.cuft.toLocaleString('en-US');
+    $('tLbs').textContent = quote.inventory.lbs.toLocaleString('en-US');
+    $('tItems').textContent = quote.inventory.pieces;
+    $('tCrew').textContent = quote.inventory.cuft ? quote.movers : '—';
+    $('tTruck').textContent = quote.inventory.cuft ? quote.truck.name.replace(' truck', '') : '—';
+
+    var tvs = quote.inventory.tvs;
+    $('tvProtLabel').textContent = tvs
+      ? 'Crate and protect my ' + tvs + (tvs > 1 ? ' TVs' : ' TV') + ' (' + money(S.protection.tvCratingPerTv) + ' each)'
+      : 'Crate and protect my TVs';
+
+    if (step === 5) renderQuote();
+  }
+
+  function renderQuote() {
+    $('qAmount').textContent = money(quote.low) + ' – ' + money(quote.high);
+    $('qMovers').textContent = quote.movers;
+    $('qTruck').textContent = quote.truck.name.replace(' truck', '');
+    $('qHours').textContent = quote.billableHours;
+
+    var rows = '<tr><td>Labor: ' + quote.movers + ' movers, ' + quote.laborHours + ' h at '
+      + money(quote.hourlyRate) + '/h</td><td>' + money(quote.laborHours * quote.hourlyRate) + '</td></tr>';
+    if (quote.travelHours > 0) {
+      rows += '<tr><td>Travel time' + (quote.doubleDriveTime ? ' (doubled, per California rule)' : '')
+        + ': ' + quote.travelHours + ' h</td><td>' + money(quote.travelHours * quote.hourlyRate) + '</td></tr>';
+    }
+    quote.lines.forEach(function (l) {
+      rows += '<tr><td>' + l.label + '</td><td>' + money(l.amount) + '</td></tr>';
+    });
+    rows += '<tr class="sum"><td>Estimated total</td><td>' + money(quote.total) + '</td></tr>';
+    $('qLines').innerHTML = rows;
+
+    var bits = [];
+    bits.push(quote.inventory.cuft.toLocaleString('en-US') + ' cu ft and about '
+      + quote.inventory.lbs.toLocaleString('en-US') + ' lb across ' + quote.inventory.pieces + ' items.');
+    if (quote.crewBumped) bits.push('We added a mover because of the stairs or heavy items — it usually ends up cheaper than a smaller crew taking longer.');
+    if (quote.accessPenaltyPct) bits.push('Access adds about ' + Math.round(quote.accessPenaltyPct) + '% to the labor time.');
+    bits.push('Includes ' + S.materials.includedFree.join(', ').toLowerCase() + ' at no charge.');
+    $('qNote').textContent = bits.join(' ');
+  }
+
+  /* ---------- steps ---------- */
+  function show(n) {
+    step = n;
+    document.querySelectorAll('.panel').forEach(function (p) {
+      p.classList.toggle('active', parseInt(p.dataset.step, 10) === n);
+    });
+    var bars = $('steps').children;
+    for (var i = 0; i < bars.length; i++) {
+      bars[i].className = (i + 1 < n) ? 'done' : (i + 1 === n ? 'now' : '');
+    }
+    $('stepnum').textContent = 'Step ' + n + ' of 5';
+    $('tally').style.display = n === 5 ? 'none' : '';
+    if (n === 5) renderQuote();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.querySelectorAll('[data-next]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (step === 1) {
+        var d = $('mdate').value, f = $('addrFrom').value.trim(), t = $('addrTo').value.trim();
+        if (!d || !f || !t) {
+          $('err1').textContent = 'Please add a date and both addresses.';
+          $('err1').style.display = 'block';
+          return;
+        }
+        $('err1').style.display = 'none';
+        state.date = d;
+        if (!state.from) state.from = { text: f };
+        if (!state.to) state.to = { text: t };
+      }
+      if (step === 3 && quote && quote.inventory.pieces === 0) {
+        $('err3').textContent = 'Add at least a few items so we can size the crew and the truck.';
+        $('err3').style.display = 'block';
+        return;
+      }
+      $('err3').style.display = 'none';
+      show(step + 1);
+    });
+  });
+  document.querySelectorAll('[data-back]').forEach(function (b) {
+    b.addEventListener('click', function () { show(step - 1); });
+  });
+  $('jumpQuote').addEventListener('click', function () {
+    if (quote && quote.inventory.pieces === 0) { show(3); return; }
+    show(5);
+  });
+
+  /* ---------- submit ---------- */
+  $('submitBtn').addEventListener('click', function () {
+    var name = $('cName').value.trim(), phone = $('cPhone').value.trim();
+    var err = $('err5');
+    if (!name || phone.replace(/\D/g, '').length < 10) {
+      err.textContent = 'We need your name and a phone number with area code.';
+      err.style.display = 'block';
+      return;
+    }
+    err.style.display = 'none';
+
+    var btn = this, label = $('submitLabel');
+    btn.disabled = true;
+    label.textContent = 'Sending…';
+
+    var payload = {
+      customer: { name: name, phone: phone, email: $('cEmail').value.trim(), notes: $('cNotes').value.trim() },
+      move: {
+        date: state.date,
+        window: state.window,
+        from: state.from, to: state.to,
+        miles: Math.round(state.miles), driveMinutes: state.driveMinutes,
+        access: state.access, packing: state.packing,
+        tvProtection: state.tvProtection, fullValueProtection: state.fullValueProtection
+      },
+      inventory: state.inventory.filter(function (l) { return l.qty > 0; })
+        .map(function (l) { return { room: l.room, item: l.n, qty: l.qty, cuft: l.cuft * l.qty, lbs: l.lbs * l.qty }; }),
+      materials: state.materials.filter(function (m) { return m.qty > 0; }),
+      quote: quote,
+      source: location.pathname + location.search
+    };
+
+    fetch('/api/booking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (r) {
+      return r.text().then(function (b) { return { ok: r.ok, status: r.status, body: b }; });
+    }).then(function (r) {
+      if (!r.ok) { console.error('Booking failed', r.status, r.body); throw new Error(r.status); }
+      var st = $('finalStatus');
+      st.className = 'status ok';
+      st.innerHTML = '<h3 style="font-size:24px;margin-bottom:8px">Booking request sent.</h3>'
+        + '<p style="margin:0">A coordinator will call to confirm your ' + state.window.range
+        + ' window and lock the price. Nothing is charged until then.</p>';
+      btn.style.display = 'none';
+    }).catch(function (e) {
+      console.error('Zapt booking:', e);
+      var st = $('finalStatus');
+      st.className = 'status bad';
+      st.innerHTML = '<h3 style="font-size:24px;margin-bottom:8px">That didn\u2019t send.</h3>'
+        + '<p style="margin:0">Call (415) 843-2532 and we will take the booking over the phone.</p>';
+    }).then(function () {
+      btn.disabled = false;
+      label.textContent = 'Request this booking';
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
