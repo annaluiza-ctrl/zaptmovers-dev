@@ -122,6 +122,28 @@ tr.sum td{border-bottom:0;padding-top:14px;font-weight:700;font-size:17px}
 .diag.warn{display:block;background:#FBEDEB;border:1.5px solid var(--stamp);color:var(--stamp)}
 .diag.info{display:block;background:#FFF8DC;border:1.5px solid var(--zap);color:var(--ink)}
 gmp-place-autocomplete{width:100%;display:block}
+.below{margin-top:18px}
+.below h3{font-size:24px;margin-bottom:4px}
+.below .hint{color:var(--ink-2);font-size:13.5px;margin-bottom:18px}
+.route{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:center}
+.route .end{background:var(--kraft);border-radius:11px;padding:16px}
+.route .end .mono{color:var(--ink-2);display:block;margin-bottom:6px}
+.route .end b{font-weight:600;font-size:15.5px;display:block;line-height:1.35}
+.route .end small{color:var(--ink-2);font-size:12.5px;display:block;margin-top:6px}
+.route .mid{text-align:center;color:var(--ink-2)}
+.route .mid b{display:block;font-family:"Big Shoulders Display",sans-serif;font-weight:900;font-size:26px;color:var(--ink);line-height:1}
+.route .mid .mono{display:block;margin-top:4px}
+.route .arrow{font-size:22px;color:var(--corrugate);line-height:1;margin-bottom:8px}
+.invroom{margin-bottom:18px}
+.invroom h4{font-family:"DM Mono",monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);margin:0 0 6px;font-weight:500}
+.invroom table{width:100%;border-collapse:collapse}
+.invroom td{padding:7px 0;border-bottom:1px solid var(--kraft-deep);font-size:14.5px}
+.invroom td.q{text-align:right;width:52px;font-variant-numeric:tabular-nums}
+.invroom td.c{text-align:right;width:90px;color:var(--ink-2);font-family:"DM Mono",monospace;font-size:12px}
+.invtotal{display:flex;gap:26px;flex-wrap:wrap;background:var(--ink);color:var(--kraft);border-radius:11px;padding:16px 18px;margin-top:6px}
+.invtotal div b{display:block;font-family:"Big Shoulders Display",sans-serif;font-weight:900;font-size:24px;color:var(--zap);line-height:1}
+.invtotal div span{font-family:"DM Mono",monospace;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;opacity:.8}
+@media(max-width:700px){.route{grid-template-columns:1fr}.route .mid{padding:6px 0}}
 .err{color:var(--stamp);font-size:13px;font-weight:600;margin-top:8px}
 
 @media(max-width:860px){
@@ -266,7 +288,7 @@ gmp-place-autocomplete{width:100%;display:block}
   <!-- 5. QUOTE -->
   <section class="panel" data-step="5">
     <h2 class="ph">Your move, priced</h2>
-    <p class="sub">Built from your inventory, your access and the drive between the two addresses.</p>
+    <p class="sub">Built from your inventory, your access and the drive between the two addresses. Not sure about the price, or want to hear about current discounts? Call <a href="tel:+14158432532" style="font-weight:600">(415) 843-2532</a> before you send the request and we will walk through it with you.</p>
 
     <div class="quotegrid">
       <div class="big">
@@ -306,6 +328,18 @@ gmp-place-autocomplete{width:100%;display:block}
         </div>
       </div>
     </div>
+    <div class="card below">
+      <h3>Your route</h3>
+      <p class="hint">Drive time between the two addresses is part of the price, so it is worth checking these are right.</p>
+      <div class="route" id="routeBox"></div>
+    </div>
+
+    <div class="card below">
+      <h3>What we're moving</h3>
+      <p class="hint">Everything you selected, room by room. Go back to step 3 to change anything.</p>
+      <div id="invSummary"></div>
+    </div>
+
     <div style="margin-top:18px">
       <button class="btn" data-back style="background:transparent;color:var(--ink);border:1.5px solid var(--ink)">Back to extras</button>
     </div>
@@ -565,6 +599,75 @@ gmp-place-autocomplete{width:100%;display:block}
     if (quote.accessPenaltyPct) bits.push('Access adds about ' + Math.round(quote.accessPenaltyPct) + '% to the labor time.');
     bits.push('Includes ' + S.materials.includedFree.join(', ').toLowerCase() + ' at no charge.');
     $('qNote').textContent = bits.join(' ');
+
+    renderRoute();
+    renderInventorySummary();
+  }
+
+  function accessLabel(end) {
+    var a = state.access[end] || {};
+    var s = a.type === 'stairs' ? (a.flights || 1) + (a.flights > 1 ? ' flights of stairs' : ' flight of stairs')
+          : a.type === 'elevator' ? 'Elevator' : 'Ground floor';
+    if (a.longCarry) s += ', long carry';
+    return s;
+  }
+
+  function renderRoute() {
+    var from = state.from || {}, to = state.to || {};
+    var typedFrom = from.text || $('addrFrom').value || 'Not set';
+    var typedTo = to.text || $('addrTo').value || 'Not set';
+    var mid = state.miles
+      ? '<b>' + Math.round(state.miles) + ' mi</b><span class="mono">' + state.driveMinutes + ' min drive</span>'
+      : '<b>—</b><span class="mono">Drive time confirmed by phone</span>';
+
+    $('routeBox').innerHTML =
+      '<div class="end"><span class="mono">Pick up</span><b>' + typedFrom + '</b>'
+        + '<small>' + accessLabel('origin') + '</small></div>'
+      + '<div class="mid"><div class="arrow">&#8594;</div>' + mid + '</div>'
+      + '<div class="end"><span class="mono">Drop off</span><b>' + typedTo + '</b>'
+        + '<small>' + accessLabel('destination') + '</small></div>';
+  }
+
+  function renderInventorySummary() {
+    var host = $('invSummary');
+    var picked = state.inventory.filter(function (l) { return l.qty > 0; });
+    if (!picked.length) {
+      host.innerHTML = '<p class="hint" style="margin:0">Nothing selected yet. Go back to step 3 and add your items.</p>';
+      return;
+    }
+
+    var rooms = {};
+    picked.forEach(function (l) { (rooms[l.room] = rooms[l.room] || []).push(l); });
+
+    var html = '';
+    Object.keys(rooms).forEach(function (room) {
+      var lines = rooms[room].map(function (l) {
+        return '<tr><td>' + l.n + '</td><td class="q">x' + l.qty + '</td>'
+          + '<td class="c">' + (l.cuft * l.qty) + ' cu ft</td></tr>';
+      }).join('');
+      var roomCuft = rooms[room].reduce(function (s, l) { return s + l.cuft * l.qty; }, 0);
+      html += '<div class="invroom"><h4>' + room + ' &middot; ' + Math.round(roomCuft) + ' cu ft</h4>'
+        + '<table>' + lines + '</table></div>';
+    });
+
+    var mats = state.materials.filter(function (m) { return m.qty > 0; });
+    if (mats.length) {
+      var rows = mats.map(function (m) {
+        var def = S.materials.items.filter(function (x) { return x.id === m.id; })[0] || {};
+        return '<tr><td>' + (def.label || m.id) + '</td><td class="q">x' + m.qty + '</td><td class="c"></td></tr>';
+      }).join('');
+      html += '<div class="invroom"><h4>Packing materials</h4><table>' + rows + '</table></div>';
+    }
+
+    html += '<div class="invtotal">'
+      + '<div><b>' + quote.inventory.cuft.toLocaleString('en-US') + '</b><span>Cubic feet</span></div>'
+      + '<div><b>' + quote.inventory.lbs.toLocaleString('en-US') + '</b><span>Pounds</span></div>'
+      + '<div><b>' + quote.inventory.pieces + '</b><span>Items</span></div>'
+      + '<div><b>' + quote.movers + '</b><span>Movers</span></div>'
+      + '<div><b>' + quote.truck.name.replace(' truck', '') + '</b><span>Truck</span></div>'
+      + '</div>';
+
+    host.innerHTML = html;
   }
 
   /* ---------- steps ---------- */
