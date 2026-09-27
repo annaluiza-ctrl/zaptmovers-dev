@@ -118,6 +118,10 @@ tr.sum td{border-bottom:0;padding-top:14px;font-weight:700;font-size:17px}
 .status{border-radius:12px;padding:20px;margin-top:16px;display:none}
 .status.ok{display:block;background:var(--kraft);border:2px solid var(--ink)}
 .status.bad{display:block;background:#FBEDEB;border:2px solid var(--stamp);color:var(--stamp)}
+.diag{display:none;border-radius:10px;padding:12px 14px;font-size:13.5px;margin-bottom:14px}
+.diag.warn{display:block;background:#FBEDEB;border:1.5px solid var(--stamp);color:var(--stamp)}
+.diag.info{display:block;background:#FFF8DC;border:1.5px solid var(--zap);color:var(--ink)}
+gmp-place-autocomplete{width:100%;display:block}
 .err{color:var(--stamp);font-size:13px;font-weight:600;margin-top:8px}
 
 @media(max-width:860px){
@@ -160,6 +164,7 @@ tr.sum td{border-bottom:0;padding-top:14px;font-weight:700;font-size:17px}
         <label for="mdate">Preferred move date</label>
         <input type="date" id="mdate">
       </div>
+      <div class="diag" id="mapsNote"></div>
       <div class="field">
         <label for="addrFrom">Moving from</label>
         <input type="text" id="addrFrom" placeholder="Start typing your address" autocomplete="off">
@@ -319,6 +324,7 @@ tr.sum td{border-bottom:0;padding-top:14px;font-weight:700;font-size:17px}
   </div>
 </div>
 
+<script src="/assets/places.js"></script>
 <script src="/assets/inventory.js"></script>
 <script src="/assets/booking-engine.js"></script>
 <script>
@@ -346,7 +352,7 @@ tr.sum td{border-bottom:0;padding-top:14px;font-weight:700;font-size:17px}
     buildInventory();
     buildMaterials();
     buildWindows();
-    if (S.googleMapsKey) loadMaps(S.googleMapsKey);
+    startPlaces();
     recalc();
   }).catch(function (e) {
     console.error('Could not load /assets/pricing.json', e);
@@ -354,53 +360,33 @@ tr.sum td{border-bottom:0;padding-top:14px;font-weight:700;font-size:17px}
       + '<p class="sub">We could not load pricing settings. Please call (415) 843-2532 and we will take your move over the phone.</p></div>';
   });
 
-  /* ---------- google places ---------- */
-  function loadMaps(key) {
-    var s = document.createElement('script');
-    s.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(key)
-          + '&libraries=places&loading=async&callback=zaptInitMaps';
-    s.async = true;
-    document.head.appendChild(s);
-  }
-  window.zaptInitMaps = function () {
-    ['addrFrom', 'addrTo'].forEach(function (id) {
-      var ac = new google.maps.places.Autocomplete($(id), {
-        types: ['address'],
-        componentRestrictions: { country: 'us' },
-        fields: ['formatted_address', 'geometry', 'address_components']
-      });
-      ac.addListener('place_changed', function () {
-        var p = ac.getPlace();
-        if (!p.geometry) return;
-        var rec = { text: p.formatted_address, lat: p.geometry.location.lat(), lng: p.geometry.location.lng() };
-        (p.address_components || []).forEach(function (c) {
-          if (c.types.indexOf('locality') > -1) rec.city = c.long_name;
-          if (c.types.indexOf('administrative_area_level_1') > -1) rec.state = c.short_name;
-          if (c.types.indexOf('postal_code') > -1) rec.zip = c.long_name;
-        });
-        state[id === 'addrFrom' ? 'from' : 'to'] = rec;
+  /* ---------- addresses ---------- */
+  function startPlaces() {
+    ZaptPlaces.init({
+      key: S.googleMapsKey,
+      fields: { origin: $('addrFrom'), destination: $('addrTo') },
+      onNote: function (msg, kind) {
+        var n = $('mapsNote');
+        n.className = kind === 'clear' ? 'diag' : 'diag ' + kind;
+        n.textContent = msg;
+      },
+      onPick: function (which, rec) {
+        state[which === 'origin' ? 'from' : 'to'] = rec;
         measure();
-      });
+      }
     });
-  };
+  }
 
-  function measure() {
-    if (!state.from || !state.to || !window.google) return;
-    new google.maps.DistanceMatrixService().getDistanceMatrix({
-      origins: [{ lat: state.from.lat, lng: state.from.lng }],
-      destinations: [{ lat: state.to.lat, lng: state.to.lng }],
-      travelMode: 'DRIVING'
-    }, function (res, status) {
-      if (status !== 'OK') return;
-      var e = res.rows[0].elements[0];
-      if (e.status !== 'OK') return;
-      state.driveMinutes = Math.round(e.duration.value / 60);
-      state.miles = e.distance.value / 1609.34;
-      var n = $('distNote');
-      n.style.display = 'block';
-      n.textContent = Math.round(state.miles) + ' miles \u00b7 about ' + state.driveMinutes + ' minutes of driving';
-      recalc();
-    });
+  async function measure() {
+    if (!state.from || !state.to) return;
+    var r = await ZaptPlaces.driveTime(state.from, state.to);
+    if (!r) return;
+    state.driveMinutes = r.minutes;
+    state.miles = r.miles;
+    var n = $('distNote');
+    n.style.display = 'block';
+    n.textContent = Math.round(r.miles) + ' miles \u00b7 about ' + r.minutes + ' minutes of driving';
+    recalc();
   }
 
   /* ---------- inventory ui ---------- */

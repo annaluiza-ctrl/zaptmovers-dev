@@ -186,3 +186,19 @@ you type so you can see the effect immediately.
 
 Saving in the settings page writes to **your browser only**, for testing.
 To make changes live, download `pricing.json` and replace the file in the repo.
+
+### If address autocomplete does not work
+
+The booking page now says so on screen instead of failing silently, and the
+browser console prints the specific cause. The usual one:
+
+**The key is set in the settings page but not live.** "Save to this browser"
+does exactly that — it saves to your browser. Open `/assets/pricing.json` on the
+deployed site and look at `googleMapsKey`. If it is `""`, download the file from
+the settings page, replace it in the repo and deploy.
+
+The address module (`assets/places.js`) tries `PlaceAutocompleteElement` and the
+Routes API first, then falls back to the legacy `Autocomplete` widget and
+Distance Matrix, so it works on Google Cloud projects created before and after
+the March 2025 changes. With no key, the fields stay plain text and the customer
+is told to type the full address.
