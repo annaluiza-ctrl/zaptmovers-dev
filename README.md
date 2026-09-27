@@ -202,3 +202,22 @@ Routes API first, then falls back to the legacy `Autocomplete` widget and
 Distance Matrix, so it works on Google Cloud projects created before and after
 the March 2025 changes. With no key, the fields stay plain text and the customer
 is told to type the full address.
+
+### Google Maps key: environment variable, not a file
+
+Netlify scans committed files for credentials and **fails the build** if it
+finds a Google API key. That is why `assets/pricing.json` no longer holds it.
+
+```
+Netlify > Site configuration > Environment variables
+GOOGLE_MAPS_KEY = your key
+```
+
+Then redeploy — functions only read environment variables at build time.
+Verify at `/api/config`: it should return your key. If it returns an empty
+string, the variable is missing or the site has not been rebuilt since you
+added it.
+
+The key is still visible to anyone who opens the page. That is normal and
+unavoidable for a browser Maps key. The HTTP referrer restriction in Google
+Cloud Console is what actually protects it.

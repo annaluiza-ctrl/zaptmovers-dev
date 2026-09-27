@@ -127,10 +127,10 @@ td:last-child{padding-right:0}
   <div class="card">
     <h2>Integrations</h2>
     <div class="grid">
-      <div><label for="gkey">Google Maps API key</label><input type="text" id="gkey" placeholder="Leave empty to disable address autocomplete"></div>
+      <div><label for="gkey">Google Maps API key</label><input type="text" id="gkey" placeholder="Set GOOGLE_MAPS_KEY in Netlify, not here" disabled></div>
       <div><label for="salesEmail">Sales email</label><input type="text" id="salesEmail"></div>
     </div>
-    <p class="hint" style="margin:14px 0 0">Restrict the Maps key by HTTP referrer in Google Cloud Console before going live. An unrestricted key can be used by anyone and billed to you.</p>
+    <p class="hint" style="margin:14px 0 0"><b>The Maps key is not set here.</b> Netlify refuses to build when a credential is found in a committed file, so the key lives in an environment variable instead: Site configuration, Environment variables, <code>GOOGLE_MAPS_KEY</code>. Redeploy after adding it. Check it is live at <a href="/api/config" target="_blank">/api/config</a>.<br><br>Restrict the key by HTTP referrer in Google Cloud Console before going live. An unrestricted key can be used by anyone and billed to you.</p>
   </div>
 
   <div class="preview">

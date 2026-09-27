@@ -349,6 +349,14 @@ gmp-place-autocomplete{width:100%;display:block}
     var override = null;
     try { override = JSON.parse(localStorage.getItem('zapt_pricing_override') || 'null'); } catch (e) {}
     S = override || json;
+    return fetch('/api/config')
+      .then(function (r) { return r.ok ? r.json() : {}; })
+      .catch(function () { return {}; })
+      .then(function (cfg) {
+        if (!S.googleMapsKey && cfg.googleMapsKey) S.googleMapsKey = cfg.googleMapsKey;
+        return json;
+      });
+  }).then(function () {
     buildInventory();
     buildMaterials();
     buildWindows();
