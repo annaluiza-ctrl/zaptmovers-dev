@@ -74,7 +74,7 @@
     {
       "id": "truckFee",
       "label": "Truck and equipment fee",
-      "amount": 125,
+      "amount": 69,
       "auto": true
     },
     {
