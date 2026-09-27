@@ -1,6 +1,6 @@
 {
   "_comment": "Zapt Movers pricing and operations settings. Edit in /admin/pricing/ and download this file, or edit here directly and redeploy. Every number the booking calculator uses lives in this file.",
-  "googleMapsKey": "",
+  "googleMapsKey": "AIzaSyAZwA8DfOOHrryq0SbEq5ifJndRCjAbaaU",
   "productivity": {
     "cuftPerMoverPerHour": 55,
     "_cuftPerMoverPerHour": "How many cubic feet one mover loads AND unloads per hour. Lower it if your quotes keep coming in short.",
