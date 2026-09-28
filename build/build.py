@@ -85,6 +85,8 @@ def footer(nearby_html, city_label):
         <a href="tel:+14698688785">(469) 868-8785 &middot; DFW</a>
         <a href="#quote">Request a quote</a>
         <a href="/blog/">Moving guides</a>
+        <a href="/terms/">Terms of Service</a>
+        <a href="/privacy/">Privacy Policy</a>
       </div>
     </div>
     <div class="legal">
@@ -426,7 +428,7 @@ if __name__ == '__main__':
     (ROOT / 'movers' / 'index.html').write_text(hub_page(), encoding='utf-8')
     print('built /movers/ hub')
 
-    urls = ['/', '/movers/', '/blog/', '/blog/california-to-texas/', '/blog/summer-move/']
+    urls = ['/', '/movers/', '/blog/', '/terms/', '/privacy/', '/blog/california-to-texas/', '/blog/summer-move/']
     urls += ['/movers/%s/' % c['slug'] for c in CITIES]
     body = '\n'.join('  <url><loc>%s%s</loc></url>' % (BASE, u) for u in urls)
     (ROOT / 'sitemap.xml').write_text(

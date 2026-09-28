@@ -49,6 +49,19 @@
     { v: 'Other',           en: 'Something else',              pt: 'Outro' }
   ];
 
+
+  // SMS consent. Carriers and the TCPA expect this to be an affirmative act,
+  // so the box starts unchecked and the full disclosure is the label itself.
+  var SMS_EN = 'By providing your phone number, you agree to receive text messages from Zapt Movers '
+    + 'about your move. Message frequency varies. Message and data rates may apply. Reply STOP to opt out '
+    + 'or HELP for help. See our <a href="/privacy/" target="_blank">Privacy Policy</a> and '
+    + '<a href="/terms/" target="_blank">Terms of Service</a>.';
+
+  var SMS_PT = 'Ao informar seu telefone, você concorda em receber mensagens de texto da Zapt Movers '
+    + 'sobre a sua mudança. A frequência varia. Podem incidir tarifas de mensagem e dados. Responda STOP '
+    + 'para cancelar ou HELP para ajuda. Veja nossa <a href="/privacy/" target="_blank">Política de Privacidade</a> '
+    + 'e os <a href="/terms/" target="_blank">Termos de Serviço</a>.';
+
   function esc(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
   }
@@ -116,8 +129,9 @@
         '<div class="field"><label for="' + id + '-referral" data-en="How did you hear about us?" data-pt="Como nos conheceu?">How did you hear about us?</label>' +
         '<select id="' + id + '-referral"><option value="" data-en="Select one" data-pt="Selecione">Select one</option>' + refOpts + '</select></div>' +
       '</div>' +
-      '<label class="consent" for="' + id + '-optin"><input type="checkbox" id="' + id + '-optin" checked>' +
-      '<span data-en="Text me updates about my move. Message rates may apply." data-pt="Quero receber mensagens sobre a minha mudança. Podem incidir tarifas de SMS.">Text me updates about my move. Message rates may apply.</span></label>' +
+      '<label class="consent" for="' + id + '-optin"><input type="checkbox" id="' + id + '-optin">' +
+      '<span data-en="' + SMS_EN.replace(/"/g, '&quot;') + '" data-pt="' + SMS_PT.replace(/"/g, '&quot;') + '">'
+      + SMS_EN + '</span></label>' +
       '<input class="hp" type="text" id="' + id + '-company" tabindex="-1" autocomplete="off" aria-hidden="true">' +
       '<div class="row">' +
         '<button class="btn" id="' + id + '-send"><span id="' + id + '-label" data-en="Send my request" data-pt="Enviar meu pedido">Send my request</span></button>' +

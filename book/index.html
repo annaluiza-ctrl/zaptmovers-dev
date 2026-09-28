@@ -321,6 +321,10 @@ gmp-place-autocomplete{width:100%;display:block}
           </div>
           <div class="field"><label for="cEmail">Email</label><input type="text" id="cEmail" autocomplete="email" inputmode="email"></div>
           <div class="field"><label for="cNotes">Anything we should know?</label><textarea id="cNotes" rows="3" placeholder="Gate code, HOA contact, tight street, an item you're worried about"></textarea></div>
+          <label class="consent" for="smsOptIn" style="display:flex;gap:10px;align-items:flex-start;margin:2px 0 16px;font-size:12.5px;line-height:1.45;color:var(--ink-2);cursor:pointer">
+            <input type="checkbox" id="smsOptIn" style="margin-top:3px;width:17px;height:17px;accent-color:var(--ink);flex-shrink:0">
+            <span>By providing your phone number, you agree to receive text messages from Zapt Movers about your move. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help. See our <a href="/privacy/" target="_blank" style="color:var(--ink);font-weight:600">Privacy Policy</a> and <a href="/terms/" target="_blank" style="color:var(--ink);font-weight:600">Terms of Service</a>.</span>
+          </label>
           <button class="btn btn-zap" id="submitBtn" style="width:100%"><span id="submitLabel">Request this booking</span></button>
           <p class="err" id="err5" style="display:none"></p>
           <p class="note" style="text-align:center;margin-top:12px">No charge now. A coordinator confirms the details and the final price.</p>
@@ -733,7 +737,7 @@ gmp-place-autocomplete{width:100%;display:block}
     label.textContent = 'Sending…';
 
     var payload = {
-      customer: { name: name, phone: phone, email: $('cEmail').value.trim(), notes: $('cNotes').value.trim() },
+      customer: { name: name, phone: phone, email: $('cEmail').value.trim(), notes: $('cNotes').value.trim(), smsOptIn: $('smsOptIn').checked },
       move: {
         date: state.date,
         window: state.window,

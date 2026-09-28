@@ -182,7 +182,7 @@ export default async (req) => {
       phoneNumber: c.phone,
       phoneType: 'Mobile',
       email: c.email,
-      userOptIn: true,
+      userOptIn: c.smsOptIn === true,
       referralSource: 'Your Website',
       serviceType: m.packing && m.packing !== 'none' ? 'MovingAndPacking' : 'Moving',
       moveDate: (m.date || '').replace(/-/g, ''),

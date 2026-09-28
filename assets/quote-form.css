@@ -7,7 +7,8 @@
 }
 .zq select:focus,.zq input:focus{outline:3px solid rgba(255,209,0,.65);outline-offset:1px;border-color:var(--ink)}
 .zq .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.zq .consent{display:flex;gap:10px;align-items:flex-start;margin:2px 0 16px;font-size:13.5px;color:var(--ink-2);cursor:pointer}
+.zq .consent{display:flex;gap:10px;align-items:flex-start;margin:2px 0 16px;font-size:12.5px;line-height:1.45;color:var(--ink-2);cursor:pointer}
+.zq .consent a{color:var(--ink);font-weight:600}
 .zq .consent input{margin-top:3px;width:17px;height:17px;accent-color:var(--ink);flex-shrink:0}
 .zq .err{color:var(--stamp);font-size:13px;margin:7px 0 0;font-weight:600}
 .zq input.bad-field{border-color:var(--stamp)}
