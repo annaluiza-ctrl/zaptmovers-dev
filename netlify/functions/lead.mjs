@@ -8,6 +8,7 @@ const ALLOWED_ORIGINS = new Set([
   "https://zaptmovers.netlify.app",
 ])
 
+// Preencher depois com os IDs reais do SmartMoving.
 const BRANCH_IDS = {
   bay: "",
   la: "",
@@ -71,37 +72,29 @@ function formatMoveDate(value) {
     return ""
   }
 
-  // Já está em YYYYMMDD
+  // YYYYMMDD
   if (/^\d{8}$/.test(raw)) {
     return raw
   }
 
   // YYYY-MM-DD
-  let match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  const isoMatch = raw.match(
+    /^(\d{4})-(\d{2})-(\d{2})$/
+  )
 
-  if (match) {
-    return `${match[1]}${match[2]}${match[3]}`
+  if (isoMatch) {
+    return `${isoMatch[1]}${isoMatch[2]}${isoMatch[3]}`
   }
 
   // MM/DD/YYYY
-  match = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)
+  const usMatch = raw.match(
+    /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
+  )
 
-  if (match) {
-    const month = match[1].padStart(2, "0")
-    const day = match[2].padStart(2, "0")
-    const year = match[3]
-
-    return `${year}${month}${day}`
-  }
-
-  // DD/MM/YYYY
-  // Só entra aqui quando o primeiro número claramente não pode ser mês.
-  match = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/)
-
-  if (match && Number(match[1]) > 12) {
-    const day = match[1].padStart(2, "0")
-    const month = match[2].padStart(2, "0")
-    const year = match[3]
+  if (usMatch) {
+    const month = usMatch[1].padStart(2, "0")
+    const day = usMatch[2].padStart(2, "0")
+    const year = usMatch[3]
 
     return `${year}${month}${day}`
   }
@@ -111,6 +104,121 @@ function formatMoveDate(value) {
 
 function isUSZip(value) {
   return /^\d{5}(-\d{4})?$/.test(clean(value))
+}
+
+function extractZip(value) {
+  const text = clean(value)
+
+  const match = text.match(
+    /\b(\d{5})(?:-\d{4})?\b/
+  )
+
+  if (!match) {
+    return null
+  }
+
+  return Number(match[1])
+}
+
+function detectBranch(origin) {
+  const text = clean(origin).toLowerCase()
+  const zip = extractZip(origin)
+
+  /*
+   * DALLAS / FORT WORTH
+   *
+   * Exemplos:
+   * Dallas 75201
+   * Plano 75024
+   * Fort Worth 76102
+   * Frisco 75034
+   */
+  if (
+    zip &&
+    (
+      (zip >= 75000 && zip <= 75399) ||
+      (zip >= 76000 && zip <= 76299)
+    )
+  ) {
+    return "dfw"
+  }
+
+  if (
+    text.includes("dallas") ||
+    text.includes("fort worth") ||
+    text.includes("plano") ||
+    text.includes("frisco") ||
+    text.includes("irving") ||
+    text.includes("arlington") ||
+    text.includes("garland") ||
+    text.includes("richardson") ||
+    text.includes("mckinney") ||
+    text.includes("carrollton") ||
+    text.includes("grand prairie")
+  ) {
+    return "dfw"
+  }
+
+  /*
+   * LOS ANGELES / ORANGE COUNTY
+   */
+  if (
+    zip &&
+    (
+      (zip >= 90000 && zip <= 91899) ||
+      (zip >= 92600 && zip <= 92899)
+    )
+  ) {
+    return "la"
+  }
+
+  if (
+    text.includes("los angeles") ||
+    text.includes("anaheim") ||
+    text.includes("irvine") ||
+    text.includes("orange county") ||
+    text.includes("santa ana") ||
+    text.includes("newport beach") ||
+    text.includes("huntington beach") ||
+    text.includes("long beach") ||
+    text.includes("pasadena") ||
+    text.includes("glendale") ||
+    text.includes("burbank") ||
+    text.includes("hollywood")
+  ) {
+    return "la"
+  }
+
+  /*
+   * BAY AREA
+   */
+  if (
+    zip &&
+    zip >= 94000 &&
+    zip <= 95199
+  ) {
+    return "bay"
+  }
+
+  if (
+    text.includes("san francisco") ||
+    text.includes("san jose") ||
+    text.includes("oakland") ||
+    text.includes("hayward") ||
+    text.includes("santa clara") ||
+    text.includes("fremont") ||
+    text.includes("berkeley") ||
+    text.includes("palo alto") ||
+    text.includes("sunnyvale") ||
+    text.includes("mountain view") ||
+    text.includes("san mateo") ||
+    text.includes("redwood city") ||
+    text.includes("walnut creek")
+  ) {
+    return "bay"
+  }
+
+  return ""
 }
 
 function toBooleanString(value) {
@@ -129,10 +237,16 @@ function toBooleanString(value) {
 }
 
 export default async (req) => {
-  const origin = req.headers.get("origin")
+  const originHeader = req.headers.get("origin")
 
-  if (origin && !ALLOWED_ORIGINS.has(origin)) {
-    console.error("Origin not allowed:", origin)
+  if (
+    originHeader &&
+    !ALLOWED_ORIGINS.has(originHeader)
+  ) {
+    console.error(
+      "Origin not allowed:",
+      originHeader
+    )
 
     return jsonResponse(
       req,
@@ -166,7 +280,8 @@ export default async (req) => {
     )
   }
 
-  const key = process.env.SMARTMOVING_PROVIDER_KEY
+  const key =
+    process.env.SMARTMOVING_PROVIDER_KEY
 
   if (!key) {
     console.error(
@@ -188,7 +303,10 @@ export default async (req) => {
   try {
     input = await req.json()
   } catch (err) {
-    console.error("Invalid JSON:", err)
+    console.error(
+      "Invalid JSON:",
+      err
+    )
 
     return jsonResponse(
       req,
@@ -199,6 +317,7 @@ export default async (req) => {
     )
   }
 
+  // Honeypot
   if (input.company) {
     return jsonResponse(
       req,
@@ -228,7 +347,7 @@ export default async (req) => {
 
   if (!fullName && !firstName) {
     console.error(
-      "Missing name. Received payload:",
+      "Missing name:",
       JSON.stringify(input)
     )
 
@@ -299,66 +418,106 @@ export default async (req) => {
       false
   )
 
+  /*
+   * Detecta automaticamente a filial
+   * usando Moving From.
+   */
+  const detectedBranch =
+    detectBranch(movingFrom)
+
+  /*
+   * Se não conseguir detectar,
+   * usa o branch enviado pelo formulário.
+   */
+  const branchKey =
+    detectedBranch ||
+    firstValue(input.branch)
+
+  const branchId =
+    BRANCH_IDS[branchKey]
+
   const smartMovingLead = {}
 
   if (fullName) {
-    smartMovingLead.fullName = fullName
+    smartMovingLead.fullName =
+      fullName
   } else {
-    smartMovingLead.firstName = firstName
+    smartMovingLead.firstName =
+      firstName
 
     if (lastName) {
-      smartMovingLead.lastName = lastName
+      smartMovingLead.lastName =
+        lastName
     }
   }
 
   if (phoneNumber) {
-    smartMovingLead.phoneNumber = phoneNumber
+    smartMovingLead.phoneNumber =
+      phoneNumber
   }
 
   if (email) {
-    smartMovingLead.email = email
+    smartMovingLead.email =
+      email
   }
 
   if (moveDate) {
-    smartMovingLead.moveDate = moveDate
+    smartMovingLead.moveDate =
+      moveDate
   }
 
   if (moveSize) {
-    smartMovingLead.moveSize = moveSize
+    smartMovingLead.moveSize =
+      moveSize
   }
 
   if (referralSource) {
-    smartMovingLead.referralSource = referralSource
+    smartMovingLead.referralSource =
+      referralSource
   }
 
   if (phoneNumber) {
-    smartMovingLead.userOptIn = userOptIn
+    smartMovingLead.userOptIn =
+      userOptIn
   }
 
+  /*
+   * Se o usuário digitar somente ZIP,
+   * envia como ZIP.
+   *
+   * Se digitar cidade/endereço + ZIP,
+   * envia o endereço completo.
+   */
   if (movingFrom) {
     if (isUSZip(movingFrom)) {
-      smartMovingLead.originZip = movingFrom
+      smartMovingLead.originZip =
+        movingFrom
     } else {
-      smartMovingLead.originAddressFull = movingFrom
+      smartMovingLead.originAddressFull =
+        movingFrom
     }
   }
 
   if (movingTo) {
     if (isUSZip(movingTo)) {
-      smartMovingLead.destinationZip = movingTo
+      smartMovingLead.destinationZip =
+        movingTo
     } else {
-      smartMovingLead.destinationAddressFull = movingTo
+      smartMovingLead.destinationAddressFull =
+        movingTo
     }
   }
 
-  const branchKey = firstValue(input.branch)
-  const branchId = BRANCH_IDS[branchKey]
-
   let url =
-    `${SMARTMOVING_URL}?providerKey=${encodeURIComponent(key)}`
+    `${SMARTMOVING_URL}?providerKey=${encodeURIComponent(
+      key
+    )}`
 
   if (branchId) {
-    url += `&branchId=${encodeURIComponent(branchId)}`
+    url +=
+      `&branchId=${encodeURIComponent(
+        branchId
+      )}`
   }
 
   console.log(
@@ -367,27 +526,50 @@ export default async (req) => {
   )
 
   console.log(
-    "SmartMoving payload:",
-    JSON.stringify(smartMovingLead)
+    "Moving From:",
+    movingFrom
   )
 
   console.log(
-    "Branch:",
-    branchKey || "not provided",
+    "Branch sent by form:",
+    input.branch || "not provided"
+  )
+
+  console.log(
+    "Branch automatically detected:",
+    detectedBranch || "not detected"
+  )
+
+  console.log(
+    "Final Branch:",
+    branchKey || "not configured"
+  )
+
+  console.log(
     "Branch ID:",
     branchId || "not configured"
   )
 
-  try {
-    const smResponse = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(smartMovingLead),
-    })
+  console.log(
+    "SmartMoving payload:",
+    JSON.stringify(smartMovingLead)
+  )
 
-    const responseText = await smResponse.text()
+  try {
+    const smResponse =
+      await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify(
+          smartMovingLead
+        ),
+      })
+
+    const responseText =
+      await smResponse.text()
 
     console.log(
       "SmartMoving HTTP status:",
@@ -396,7 +578,8 @@ export default async (req) => {
 
     console.log(
       "SmartMoving response:",
-      responseText || "(empty response)"
+      responseText ||
+        "(empty response)"
     )
 
     if (!smResponse.ok) {
@@ -404,16 +587,21 @@ export default async (req) => {
         "SmartMoving rejected lead:",
         smResponse.status,
         responseText,
-        JSON.stringify(smartMovingLead)
+        JSON.stringify(
+          smartMovingLead
+        )
       )
 
       return jsonResponse(
         req,
         {
           ok: false,
-          error: "SmartMoving rejected lead",
-          smartMovingStatus: smResponse.status,
-          smartMovingResponse: responseText,
+          error:
+            "SmartMoving rejected lead",
+          smartMovingStatus:
+            smResponse.status,
+          smartMovingResponse:
+            responseText,
         },
         smResponse.status
       )
@@ -421,7 +609,8 @@ export default async (req) => {
 
     console.log(
       "Lead submitted successfully to SmartMoving:",
-      fullName || `${firstName} ${lastName}`,
+      fullName ||
+        `${firstName} ${lastName}`,
       phoneNumber
     )
 
@@ -429,8 +618,12 @@ export default async (req) => {
       req,
       {
         ok: true,
-        smartMovingStatus: smResponse.status,
-        smartMovingResponse: responseText || null,
+        branch:
+          branchKey || null,
+        smartMovingStatus:
+          smResponse.status,
+        smartMovingResponse:
+          responseText || null,
       },
       200
     )
@@ -438,14 +631,17 @@ export default async (req) => {
     console.error(
       "Could not reach SmartMoving:",
       err,
-      JSON.stringify(smartMovingLead)
+      JSON.stringify(
+        smartMovingLead
+      )
     )
 
     return jsonResponse(
       req,
       {
         ok: false,
-        error: "Upstream unavailable",
+        error:
+          "Upstream unavailable",
       },
       502
     )
