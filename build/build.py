@@ -4,6 +4,7 @@
 import json, pathlib, re, sys
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from cities import CITIES
+from services import SERVICES
 
 ROOT = pathlib.Path('/home/claude/zapt-site')
 BASE = 'https://www.zaptmovers.com'
@@ -50,7 +51,7 @@ HEADER = '''
     </a>
     <button class="menu-toggle" id="menuBtn" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
     <nav id="nav">
-      <a class="nl" href="/#services">Services</a>
+      <a class="nl" href="/services/">Services</a>
       <a class="nl" href="/#process">How it works</a>
       <a class="nl" href="/movers/">Locations</a>
       <a class="nl" href="/blog/">Blog</a>
@@ -252,12 +253,12 @@ def page(c):
       <p>Same crews, same equipment, same insurance across every job type.</p>
     </div>
     <div class="svc">
-      <a class="scard" href="/#services"><h3>Houses &amp; apartments</h3><p>Studio to five-bedroom. Pads, wrap and floor runners included.</p></a>
-      <a class="scard" href="/#services"><h3>Office &amp; commercial</h3><p>Moved after hours so Monday looks normal.</p></a>
-      <a class="scard" href="/#services"><h3>Packing service</h3><p>Full, partial or fragile-only. We bring the boxes.</p></a>
-      <a class="scard" href="/#services"><h3>Long distance</h3><p>{c['city']} to anywhere, GPS tracked, with a delivery window.</p></a>
-      <a class="scard" href="/#services"><h3>Storage</h3><p>Monitored, climate-controlled, short or long term.</p></a>
-      <a class="scard" href="/#services"><h3>Specialty items</h3><p>Pianos, safes, art and wine. Crated and strapped.</p></a>
+      <a class="scard" href="/services/residential-moving/"><h3>Houses &amp; apartments</h3><p>Studio to five-bedroom. Pads, wrap and floor runners included.</p></a>
+      <a class="scard" href="/services/commercial-moving/"><h3>Office &amp; commercial</h3><p>Moved after hours so Monday looks normal.</p></a>
+      <a class="scard" href="/services/packing-services/"><h3>Packing service</h3><p>Full, partial or fragile-only. We bring the boxes.</p></a>
+      <a class="scard" href="/services/long-distance-moving/"><h3>Long distance</h3><p>{c['city']} to anywhere, GPS tracked, with a delivery window.</p></a>
+      <a class="scard" href="/services/storage/"><h3>Storage</h3><p>Monitored, climate-controlled, short or long term.</p></a>
+      <a class="scard" href="/services/specialty-moving/"><h3>Specialty items</h3><p>Pianos, safes, art and wine. Crated and strapped.</p></a>
     </div>
   </div>
 </section>
@@ -428,8 +429,9 @@ if __name__ == '__main__':
     (ROOT / 'movers' / 'index.html').write_text(hub_page(), encoding='utf-8')
     print('built /movers/ hub')
 
-    urls = ['/', '/movers/', '/blog/', '/terms/', '/privacy/', '/blog/california-to-texas/', '/blog/summer-move/']
+    urls = ['/', '/movers/', '/services/', '/blog/', '/terms/', '/privacy/', '/blog/california-to-texas/', '/blog/summer-move/']
     urls += ['/movers/%s/' % c['slug'] for c in CITIES]
+    urls += ['/services/%s/' % s['slug'] for s in SERVICES]
     body = '\n'.join('  <url><loc>%s%s</loc></url>' % (BASE, u) for u in urls)
     (ROOT / 'sitemap.xml').write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'

@@ -3,17 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moving Company Locations | Zapt Movers</title>
-<meta name="description" content="Zapt Movers serves the Bay Area, Los Angeles and Dallas-Fort Worth. Find your city for local crews, local pricing and a free quote.">
-<link rel="canonical" href="https://www.zaptmovers.com/movers/">
-<meta property="og:title" content="Movers in ,  | Zapt Movers">
-<meta property="og:description" content="Zapt Movers serves the Bay Area, Los Angeles and Dallas-Fort Worth. Find your city for local crews, local pricing and a free quote.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://www.zaptmovers.com/movers//">
+<title>Moving Services | Residential, Commercial, Packing, Storage | Zapt Movers</title>
+<meta name="description" content="Everything Zapt Movers does: residential and commercial moving, packing, long distance, storage and specialty items. Licensed, insured, three markets.">
+<link rel="canonical" href="https://www.zaptmovers.com/services/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800;900&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/quote-form.css">
 <style>
 :root{
   --ink:#111C2E;--ink-2:#3A4A66;--kraft:#EFE6D6;--kraft-deep:#E2D4BC;
@@ -153,9 +148,16 @@ footer{background:var(--ink);color:rgba(239,230,214,.78);padding:52px 0 32px;fon
 @media(max-width:980px){ .quotesec .wrap{grid-template-columns:1fr} .nextgrid{grid-template-columns:1fr 1fr} }
 @media(max-width:720px){ .nextgrid{grid-template-columns:1fr} }
 
+
+.inclist{display:grid;grid-template-columns:repeat(2,1fr);gap:0 26px;list-style:none;padding:0;margin:0}
+.inclist li{position:relative;padding:11px 0 11px 30px;border-bottom:1px dashed var(--corrugate);font-size:15.5px}
+.inclist li::before{content:"";position:absolute;left:0;top:17px;width:16px;height:16px;border-radius:50%;background:var(--zap)}
+@media(max-width:700px){.inclist{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
+
 <header>
   <div class="wrap bar">
     <a href="/" class="logo">
@@ -164,7 +166,7 @@ footer{background:var(--ink);color:rgba(239,230,214,.78);padding:52px 0 32px;fon
     </a>
     <button class="menu-toggle" id="menuBtn" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
     <nav id="nav">
-      <a class="nl" href="/services/">Services</a>
+      <a class="nl" href="/services/" aria-current="page">Services</a>
       <a class="nl" href="/#process">How it works</a>
       <a class="nl" href="/movers/">Locations</a>
       <a class="nl" href="/blog/">Blog</a>
@@ -177,37 +179,26 @@ footer{background:var(--ink);color:rgba(239,230,214,.78);padding:52px 0 32px;fon
 <main>
 <div class="hero">
   <div class="wrap" style="display:block">
-    <nav class="crumb mono" aria-label="Breadcrumb"><a href="/">Home</a> &nbsp;/&nbsp; Locations</nav>
-    <h1><span class="tape">Find your city</span></h1>
-    <p class="lede" style="max-width:56ch">We run our own trucks and crews in three regions. Each city page covers what actually makes a move there different, with local pricing and a free quote.</p>
+    <nav class="crumb mono" aria-label="Breadcrumb"><a href="/">Home</a> &nbsp;/&nbsp; Services</nav>
+    <h1><span class="tape">What we do</span></h1>
+    <p class="lede" style="max-width:58ch">Six services, one crew standard, the same insurance behind all of them. Each page covers what is included and what actually decides whether the job goes well.</p>
   </div>
 </div>
 <section style="padding-top:0">
   <div class="wrap">
-    <div class="sec-head" style="margin:44px 0 20px"><h2>Dallas-Fort Worth</h2></div>
     <div class="nextgrid">
-        <a class="ncard" href="/movers/plano-tx/"><h3>Plano, TX</h3><p>HOA certificates same day, gate access, alley loading and Legacy West high-rises</p></a>
-        <a class="ncard" href="/movers/frisco-tx/"><h3>Frisco, TX</h3><p>Built for new-construction closing delays, HOA gate access and cul-de-sac streets</p></a>
-        <a class="ncard" href="/movers/dallas-tx/"><h3>Dallas, TX</h3><p>Loading dock and freight elevator bookings for Uptown and Victory Park, alley access in Lakewood and the M Streets</p></a>
-        <a class="ncard" href="/movers/fort-worth-tx/"><h3>Fort Worth, TX</h3><p>Narrow streets in Fairmount and Ryan Place, TCU turnover, Alliance corporate relocations</p></a>
-        <a class="ncard" href="/movers/arlington-tx/"><h3>Arlington, TX</h3><p>We plan around stadium event days, UTA turnover and Entertainment District road closures</p></a>
-    </div>
-    <div class="sec-head" style="margin:44px 0 20px"><h2>The Bay Area</h2></div>
-    <div class="nextgrid">
-        <a class="ncard" href="/movers/san-francisco-ca/"><h3>San Francisco, CA</h3><p>We handle the temporary no-parking permit, Victorian walk-ups, steep streets and building freight elevators</p></a>
-        <a class="ncard" href="/movers/san-jose-ca/"><h3>San Jose, CA</h3><p>Silicon Valley relocations, apartment elevator bookings, Willow Glen and Rose Garden access</p></a>
-        <a class="ncard" href="/movers/hayward-ca/"><h3>Hayward, CA</h3><p>East Bay local moves, Peninsula and Tri-Valley runs, long distance to Texas</p></a>
-    </div>
-    <div class="sec-head" style="margin:44px 0 20px"><h2>Los Angeles And Orange County</h2></div>
-    <div class="nextgrid">
-        <a class="ncard" href="/movers/los-angeles-ca/"><h3>Los Angeles, CA</h3><p>Street sweeping and permit parking checked, hillside shuttles, DTLA and Koreatown building bookings</p></a>
-        <a class="ncard" href="/movers/irvine-ca/"><h3>Irvine, CA</h3><p>Built around village HOA rules, restricted move hours, gate access and required certificates of insurance</p></a>
+      <a class="ncard" href="/services/residential-moving/"><h3>Residential moving</h3><p>Full-service residential moving in the Bay Area, Los Angeles and Dallas-Fort Worth</p></a>
+      <a class="ncard" href="/services/commercial-moving/"><h3>Commercial moving</h3><p>Office and commercial moving with near-zero downtime</p></a>
+      <a class="ncard" href="/services/packing-services/"><h3>Packing services</h3><p>Professional packing services</p></a>
+      <a class="ncard" href="/services/long-distance-moving/"><h3>Long distance moving</h3><p>Long distance moving with GPS tracking, a dedicated move coordinator and a real delivery window</p></a>
+      <a class="ncard" href="/services/storage/"><h3>Storage</h3><p>Short and long term storage for moves where the dates do not line up</p></a>
+      <a class="ncard" href="/services/specialty-moving/"><h3>Specialty items</h3><p>Pianos, gun safes, pool tables, artwork, marble and wine collections</p></a>
     </div>
   </div>
 </section>
 <section class="cta-band">
   <div class="wrap">
-    <div><h2>Don't see your city?</h2><p>We cover far more than we have pages for. Call and ask.</p></div>
+    <div><h2>Not sure which you need?</h2><p>Call and describe the move. We will tell you what it actually takes.</p></div>
     <div class="cta-actions">
       <a class="btn" href="/#quote">Get a free quote</a>
       <a class="btn btn-ghost" href="tel:+14158432532">(415) 843-2532</a>
@@ -227,30 +218,35 @@ footer{background:var(--ink);color:rgba(239,230,214,.78);padding:52px 0 32px;fon
         <p style="max-width:34ch;margin-top:16px">Licensed, bonded and insured moving across the Bay Area, Los Angeles and Dallas&ndash;Fort Worth. Open every day, 8am&ndash;6pm.</p>
       </div>
       <div>
-        <h4>Nearby cities</h4>
-                <a href="/#locations">All service areas</a>
-        <a href="/movers/">All locations</a>
+        <h4>Services</h4>
+        <a href="/services/residential-moving/">Houses & apartments</a>
+        <a href="/services/commercial-moving/">Office & commercial</a>
+        <a href="/services/packing-services/">Packing & unpacking</a>
+        <a href="/services/long-distance-moving/">Long distance</a>
+        <a href="/services/storage/">Storage solutions</a>
+        <a href="/services/specialty-moving/">Specialty items</a>
+        <a href="/services/">All services</a>
       </div>
       <div>
         <h4>Contact</h4>
         <a href="tel:+14158432532">(415) 843-2532</a>
         <a href="tel:+14698688785">(469) 868-8785 &middot; DFW</a>
-        <a href="#quote">Request a quote</a>
+        <a href="/movers/">Locations</a>
         <a href="/blog/">Moving guides</a>
         <a href="/terms/">Terms of Service</a>
         <a href="/privacy/">Privacy Policy</a>
       </div>
     </div>
     <div class="legal">
-      <span>&copy; <span id="yr">2026</span> Zapt Movers &middot; US DOT 3438977 &middot; Local State License CAL-T0192235</span>
-      <span>Serving the Bay Area, Los Angeles and Dallas-Fort Worth</span>
+      <span>&copy; <span id="yr">2026</span> CPL LLC dba Zapt Movers &middot; USDOT 3438977 &middot; CAL-T0192235</span>
+      <span>Bay Area &middot; Los Angeles &middot; Dallas&ndash;Fort Worth</span>
     </div>
   </div>
 </footer>
 
 <script>
 var menuBtn = document.getElementById('menuBtn'), nav = document.getElementById('nav');
-menuBtn.addEventListener('click', function(){
+menuBtn.addEventListener('click', function () {
   var open = nav.classList.toggle('open');
   menuBtn.setAttribute('aria-expanded', String(open));
 });

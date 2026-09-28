@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://www.zaptmovers.com/</loc></url>
   <url><loc>https://www.zaptmovers.com/movers/</loc></url>
+  <url><loc>https://www.zaptmovers.com/services/</loc></url>
   <url><loc>https://www.zaptmovers.com/blog/</loc></url>
   <url><loc>https://www.zaptmovers.com/terms/</loc></url>
   <url><loc>https://www.zaptmovers.com/privacy/</loc></url>
@@ -17,4 +18,10 @@
   <url><loc>https://www.zaptmovers.com/movers/hayward-ca/</loc></url>
   <url><loc>https://www.zaptmovers.com/movers/los-angeles-ca/</loc></url>
   <url><loc>https://www.zaptmovers.com/movers/irvine-ca/</loc></url>
+  <url><loc>https://www.zaptmovers.com/services/residential-moving/</loc></url>
+  <url><loc>https://www.zaptmovers.com/services/commercial-moving/</loc></url>
+  <url><loc>https://www.zaptmovers.com/services/packing-services/</loc></url>
+  <url><loc>https://www.zaptmovers.com/services/long-distance-moving/</loc></url>
+  <url><loc>https://www.zaptmovers.com/services/storage/</loc></url>
+  <url><loc>https://www.zaptmovers.com/services/specialty-moving/</loc></url>
 </urlset>
