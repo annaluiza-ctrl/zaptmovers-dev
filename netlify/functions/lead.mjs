@@ -6,6 +6,7 @@ const ALLOWED_ORIGINS = new Set([
   "https://www.zaptmovers.com",
   "https://zaptmovers.com",
   "https://zaptmovers.netlify.app",
+  "https://zaptmovers-dev.netlify.app",
 ])
 
 // Preencher depois com os IDs reais do SmartMoving.
