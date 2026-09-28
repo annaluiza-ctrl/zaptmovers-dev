@@ -182,7 +182,15 @@
       var dest = parsePlace(val('to'));
       var opt = sizeEl.options[sizeEl.selectedIndex];
 
-      var est = (typeof opts.estimator === 'function') ? (opts.estimator() || {}) : {};
+      var est = {};
+      if (typeof opts.estimator === 'function') {
+        try {
+          est = opts.estimator() || {};
+        } catch (e) {
+          // The estimator is a nice-to-have. Never let it cost us the lead.
+          console.error('Zapt form: estimator threw, sending without it.', e);
+        }
+      }
       var packing = !!(est.extras && est.extras.some(function (x) { return /pack/i.test(x); }));
 
       var notes = [
@@ -263,13 +271,25 @@
         return;
       }
 
+      var payload;
+      try {
+        payload = JSON.stringify(buildLead());
+      } catch (e) {
+        console.error('Zapt form: could not build the lead payload.', e);
+        say('bad',
+          pt ? 'Não conseguimos enviar.' : 'That didn\u2019t go through.',
+          pt ? 'Algo falhou ao montar o seu pedido. Ligue para ' + phone + ' e um coordenador atende você na hora.'
+             : 'Something went wrong preparing your request. Call ' + phone + ' and a coordinator will take your details right now.');
+        return;
+      }
+
       sendEl.disabled = true;
       labelEl.textContent = pt ? 'Enviando…' : 'Sending…';
 
       fetch(CONFIG.leadEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(buildLead())
+        body: payload
       }).then(function (res) {
         return res.text().then(function (body) { return { res: res, body: body }; });
       }).then(function (r) {

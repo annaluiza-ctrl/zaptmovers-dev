@@ -718,6 +718,11 @@ function calc(){
 [sizeEl, distEl].forEach(el=>el.addEventListener('change', calc));
 addEls.forEach(el=>el.addEventListener('change', calc));
 
+function optionLabel(sel){
+  var o = sel.options[sel.selectedIndex];
+  return o.getAttribute('data-en') || o.textContent.trim();
+}
+
 var zaptForm = ZaptQuoteForm.mount('#zapt-quote', {
   city: 'Home',
   phoneDisplay: '(415) 843-2532',
